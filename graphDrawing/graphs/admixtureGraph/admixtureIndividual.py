@@ -17,8 +17,8 @@ class AdmixtureIndividual:
     def setphenotypedata(self, phenoValues):
         self.phenotypeData = phenoValues
 
-    def setvisibile(self, visibility):
-        self.isVisible = visibility
+    def setvisibility(self, visible):
+        self.isVisible = visible
 
 #############################Accessors##################################################
     def getpopratios(self):
@@ -36,5 +36,5 @@ class AdmixtureIndividual:
     def getnumofancestors(self):
         return len(self.populationGroups)
 
-    def getvisible(self):
+    def getvisibility(self):
         return self.isVisible
