@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-FILETYPES = ["Admixture", "PCA", "Phenotype"]
+FILETYPES = ["Admixture", "PCA", "Phenotype", "Fam"]
 
 
 def valid(filetype):
@@ -27,7 +27,7 @@ class File:
     def getfilename(self):
         return self.fileName
 
-    def getfilename(self):
+    def getfiletype(self):
         return self.fileType
 
     def getdata(self):
