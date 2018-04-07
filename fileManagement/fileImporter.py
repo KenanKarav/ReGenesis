@@ -5,8 +5,6 @@ from pyforms.controls   import ControlFile
 
 import os
 
-import numpy as np
-
 import csv
 
 class fileImporter(BaseWidget):
