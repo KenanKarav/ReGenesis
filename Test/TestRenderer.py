@@ -133,15 +133,23 @@ class Renderer(BaseWidget):
             self._phenoFile.enabled = True
 
         else:
-            self._phenoFilePath = self._phenoFile.value
-            self._numCols = self.__countCols(self._phenoFilePath)
-            
-            for i in range(1,self._numCols+1):
-                self._phenoCombo.add_item('Column '+str(i))
+            if self._phenoFile.value == '':
+                self._phenoCombo.enabled = True
+                self._buttonDone.enabled = True
+                self._phenoFile.enabled = False
+                self._plotPheno = False
+            else:
+                self._phenoFilePath = self._phenoFile.value
+                self._numCols = self.__countCols(self._phenoFilePath)
+                
+                for i in range(1,self._numCols+1):
+                    self._phenoCombo.add_item('Column '+str(i))
 
-            self._phenoCombo.enabled = True
-            self._buttonDone.enabled = True
-            self._phenoFile.enabled = False
+                self._phenoCombo.enabled = True
+                self._buttonDone.enabled = True
+                self._phenoFile.enabled = False
+
+                self._plotPheno = True
 
 
     #plotting graph from combo boxes
@@ -156,63 +164,69 @@ class Renderer(BaseWidget):
         self._numLines = self.__fileLength(self._pcaFilePath)
         self._xVals = self.__getCol(self._pcaFilePath, self._num1, self._numLines)
         self._yVals = self.__getCol(self._pcaFilePath, self._num2, self._numLines)
-        #retrieving IDs from PCA file
-        self._pcaIDs = self.__getIDs(self._pcaFilePath, int('0'), self._numLines)
-        
-        #extracting the Pheno data
-        tempList = self._phenoCombo.value.split()
-        self._num = int(tempList[1])
-        
-        self._numLines = self.__fileLength(self._phenoFilePath)
-        #put pheno data into a dictionary with key=ID and value=column
-        #store all pca data IDs in a list, loop through checking for the position of the ID in the phenotype file
-        #plot each group seperately
-        
-        tempID_1 = self.__getPhenoCol(self._phenoFilePath, int('0'), self._numLines)
-        tempID_2 = self.__getPhenoCol(self._phenoFilePath, int('1'), self._numLines)
-        self._phenoIDs = []
-        
-        for i in range(self._numLines):
-            self._phenoIDs.append(tempID_1[i]+':'+tempID_2[i])
-            
-        #retrieving data from chosen phenotype column and storing in list
-        self._phenoData = self.__getPhenoCol(self._phenoFilePath, self._num-1, self._numLines)
-        self._phenoDict = {}
-        for i in range(self._numLines):
-            self._phenoDict.update({self._phenoIDs[i]:self._phenoData[i]})
-            
-        #determining how many different groups exist and storing groups in a list
-        self._pcaGroups = self.__findGroups(self._phenoData)
+        if not self._plotPheno:
+            #plotting the graph
+            plt.scatter(self._xVals, self._yVals, color='r',s=1)
 
-        #looping through all the groups
-        for numGroups in range(len(self._pcaGroups)):
-            tempX = []
-            tempY = []
-            for numLines in range(len(self._pcaIDs)):
-                #if the ID from the pca file exists in the phenotype file
-                if self._pcaIDs[numLines] in self._phenoDict:
-                    #if the key value matches the current group we are searching for..
-                    if self._phenoDict.get(self._pcaIDs[numLines]) == self._pcaGroups[numGroups]:
-                        #print('hi')
-                        tempX.append(self._xVals[numLines])
-                        tempY.append(self._yVals[numLines])
-        #plotting the graph
-            if len(tempX)>0:
-                plt.scatter(tempX, tempY, label=self._pcaGroups[numGroups],s=1)
-                
-                
+            plt.xlabel(self._pca1.value)
+            plt.ylabel(self._pca2.value)
+            plt.title('PCA Plot')
             
-        
-        
-        #plotting the graph
-        #plt.scatter(self._xVals, self._yVals, label='lolol I hope this works', color='r',s=1)
+            plt.show()
+        else:     
+            #retrieving IDs from PCA file
+            self._pcaIDs = self.__getIDs(self._pcaFilePath, int('0'), self._numLines)
+            
+            #extracting the Pheno data
+            tempList = self._phenoCombo.value.split()
+            self._num = int(tempList[1])
+            
+            self._numLines = self.__fileLength(self._phenoFilePath)
+            #put pheno data into a dictionary with key=ID and value=column
+            #store all pca data IDs in a list, loop through checking for the position of the ID in the phenotype file
+            #plot each group seperately
+            
+            tempID_1 = self.__getPhenoCol(self._phenoFilePath, int('0'), self._numLines)
+            tempID_2 = self.__getPhenoCol(self._phenoFilePath, int('1'), self._numLines)
+            self._phenoIDs = []
+            
+            for i in range(self._numLines):
+                self._phenoIDs.append(tempID_1[i]+':'+tempID_2[i])
+                
+            #retrieving data from chosen phenotype column and storing in list
+            self._phenoData = self.__getPhenoCol(self._phenoFilePath, self._num-1, self._numLines)
+            self._phenoDict = {}
+            for i in range(self._numLines):
+                self._phenoDict.update({self._phenoIDs[i]:self._phenoData[i]})
+                
+            #determining how many different groups exist and storing groups in a list
+            self._pcaGroups = self.__findGroups(self._phenoData)
 
-        plt.xlabel(self._pca1.value)
-        plt.ylabel(self._pca2.value)
-        plt.title('PCA Plot')
-        plt.legend()
-        
-        plt.show()
+            #looping through all the groups
+            for numGroups in range(len(self._pcaGroups)):
+                tempX = []
+                tempY = []
+                for numLines in range(len(self._pcaIDs)):
+                    #if the ID from the pca file exists in the phenotype file
+                    if self._pcaIDs[numLines] in self._phenoDict:
+                        #if the key value matches the current group we are searching for..
+                        if self._phenoDict.get(self._pcaIDs[numLines]) == self._pcaGroups[numGroups]:
+                            #print('hi')
+                            tempX.append(self._xVals[numLines])
+                            tempY.append(self._yVals[numLines])
+            #plotting the graph
+                if len(tempX)>0:
+                    plt.scatter(tempX, tempY, label=self._pcaGroups[numGroups],s=1)
+
+            #plotting the graph
+            #plt.scatter(self._xVals, self._yVals, label='lolol I hope this works', color='r',s=1)
+
+            plt.xlabel(self._pca1.value)
+            plt.ylabel(self._pca2.value)
+            plt.title('PCA Plot')
+            plt.legend()
+            
+            plt.show()
         
 #Execute the application
 if __name__ == "__main__": pyforms.start_app(Renderer, geometry=(500,300,100,400))
