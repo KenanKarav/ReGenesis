@@ -166,6 +166,7 @@ class Renderer(BaseWidget):
         self._yVals = self.__getCol(self._pcaFilePath, self._num2, self._numLines)
         if not self._plotPheno:
             #plotting the graph
+            plt.clf()
             plt.scatter(self._xVals, self._yVals, color='r',s=1)
 
             plt.xlabel(self._pca1.value)
@@ -216,6 +217,7 @@ class Renderer(BaseWidget):
                             tempY.append(self._yVals[numLines])
             #plotting the graph
                 if len(tempX)>0:
+                    plt.clf()
                     plt.scatter(tempX, tempY, label=self._pcaGroups[numGroups],s=1)
 
             #plotting the graph
@@ -225,8 +227,9 @@ class Renderer(BaseWidget):
             plt.ylabel(self._pca2.value)
             plt.title('PCA Plot')
             plt.legend()
-            
+
             plt.show()
+            
         
 #Execute the application
 if __name__ == "__main__": pyforms.start_app(Renderer, geometry=(500,300,100,400))
