@@ -5,7 +5,7 @@ from pyforms.controls   import ControlFile
 
 import os
 
-import csv
+
 
 class fileImporter(BaseWidget):
 
@@ -19,7 +19,7 @@ class fileImporter(BaseWidget):
 
         #Define the button actions
         self._buttonCancel.value = self.__buttonCancelAction
-        self._buttonDone.value = self.__buttonDoneAction
+        self._buttonDone.value = self.buttonDoneAction
 
         #Define the organisation of the forms
         self.formset = [' ',' ',(' ','_controlFile',' '),'=',' ',(' ',' ',' ',' ','_buttonCancel','_buttonDone',' '),' ']
@@ -52,12 +52,16 @@ class fileImporter(BaseWidget):
         return dataList
     
     def __buttonCancelAction(self):
-        pass
+        self.close()
 
-    def __buttonDoneAction(self):        
+    def Test(self):
+        return 'hi, I work'
+
+    def buttonDoneAction(self):
         #extracting the data file name(incl. extension) from the path
         self._filePath = self._controlFile.value
         self._fileName = os.path.basename(self._filePath)
+
         #determining the file type
         self._isPca = self._fileName.find(".pca.evec")
         self._isAdmix = self._fileName.find(".Q.")
@@ -81,13 +85,18 @@ class fileImporter(BaseWidget):
         self._dataList = self.__genDataList(self._filePath, self._length)
 
         #defining dictionary of data
-        self._dataDictionary = {
+        self.dataDictionary = {
             'fileName': self._fileName,
             'fileType': self._fileType,
             'data': self._dataList
             }
-        return self._dataDictionary
-    
+        pcaCreator.Test(self)
+        fileImporter.value = self.dataDictionary
+       # return self.dataDictionary
+
+
+from fileManagement.pcaCreator import pcaCreator
 #Execute the application
 if __name__ == "__main__": pyforms.start_app(fileImporter, geometry=(500,300,400,100))
 #setting geometry: first two = x and y pos, second two = x and y size
+
