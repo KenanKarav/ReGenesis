@@ -1,9 +1,8 @@
-import wx
 
 from Test.pcaCreatorGUI import *
 
 from fileManagement.fileImporter import fileImporter
-
+from fileManagement.file import *
 
 class pcaCreator(MyFrame1):
 
@@ -36,6 +35,7 @@ class pcaCreator(MyFrame1):
             self.pca_Confirm.Enable()
 
             # run the file importer
+            self._pcaData = {}
             self._pcaData = fileImporter.ImportFile(fileImporter, self._pcaFilePath)
 
             # populate the pca choice boxes
@@ -95,12 +95,14 @@ class pcaCreator(MyFrame1):
             self.pca_label4.Enable()
 
             # run the file importer
+            #self._phenoData = {}
             self._phenoData = fileImporter.ImportFile(fileImporter, self._phenoFilePath)
+            print(type(self._phenoData))
 
             # populate the phenotype choice boxes
             self._phenoNumCols = self.__countCols(self._phenoFilePath)
 
-            for x in range(1, self._phenoNumCols):
+            for x in range(1, self._phenoNumCols+1):
                 self.pca_phenoChoice.Append('Column ' + str(x))
 
             self.pca_phenoChoice.SetSelection(0)
@@ -137,7 +139,6 @@ class pcaCreator(MyFrame1):
 
     def Confirm(self, event):
         # extracting PCA data info
-        '''
         self._numLines = self.__fileLength(self._pcaFilePath)
 
         self._num1 = self.pca_col1.Selection +1
@@ -146,53 +147,57 @@ class pcaCreator(MyFrame1):
         self._zVals = None
         if self.pca_col3.Selection >-1:
             self._num3 = self.pca_col3.Selection+1
-            self._zVals = self.__getCol('PCA',self._pcaFilePath, self._num3, self._numLines)
+            self._zVals = self.__getPcaCol(self._pcaFilePath, self._num3, self._numLines)
 
-        self._xVals = self.__getCol('PCA',self._pcaFilePath, self._num1, self._numLines)
-        self._yVals = self.__getCol('PCA',self._pcaFilePath, self._num2, self._numLines)
+        self._xVals = self.__getPcaCol(self._pcaFilePath, self._num1, self._numLines)
+        self._yVals = self.__getPcaCol(self._pcaFilePath, self._num2, self._numLines)
+
+        self._pcaIDs = self.__getIDs(self._pcaFilePath, 0, self._numLines)
+
+        self._pcaFile = File(self._pcaData['fileName'], self._pcaData['fileType'], self._pcaData['data'])
+        self._dataDict = {
+            'PcaFile' : self._pcaFile,
+            'PcaIDs' : self._pcaIDs,
+            'x' : self._xVals,
+            'y' : self._yVals,
+            'z' : self._zVals
+
+        }
         if not self._isPheno:
             #return file object
-            return self._xVals, self._yVals, self._zVals
+            return self._dataDict
         else:
             # retrieving IDs from PCA file
             self._pcaIDs = self.__getIDs(self._pcaFilePath, 0, self._numLines)
 
             # extracting the Pheno data
-            self._num = self.pca_phenoChoice.Selection +1
+            self._num = self.pca_phenoChoice.Selection
             self._numLines = self.__fileLength(self._phenoFilePath)
             # put pheno data into a dictionary with key=ID and value=column
             # store all pca data IDs in a list, loop through checking for the position of the ID in the phenotype file
             # plot each group seperately
 
-            tempID_1 = self.__getCol('Phenotype', self._phenoFilePath, 0, self._numLines)
-            tempID_2 = self.__getCol('Phenotype', self._phenoFilePath, 1, self._numLines)
+            tempID_1 = self.__getIDs( self._phenoFilePath, 0, self._numLines)
+            tempID_2 = self.__getIDs(self._phenoFilePath, 1, self._numLines)
             self._phenoIDs = []
 
-            for i in range(self._numLines):
+            for i in range(self._numLines-1):
                 self._phenoIDs.append(tempID_1[i] + ':' + tempID_2[i])
 
             # retrieving data from chosen phenotype column and storing in list
-            self._phenoData = self.__getCol('Phenotype', self._phenoFilePath, self._num - 1, self._numLines)
-            self._phenoDict = {}
-            for i in range(self._numLines):
-                self._phenoDict.update({self._phenoIDs[i]: self._phenoData[i]})
+            print(type(self._phenoData))
+            self._phenoCol = self.__getPhenoCol(self._phenoFilePath, self._num, self._numLines)
+            print(type(self._phenoData))
 
-            # determining how many different groups exist and storing groups in a list
-            self._pcaGroups = self.__findGroups(self._phenoData)
 
-            # looping through all the groups
-            for numGroups in range(len(self._pcaGroups)):
-                tempX = []
-                tempY = []
-                for numLines in range(len(self._pcaIDs)):
-                    # if the ID from the pca file exists in the phenotype file
-                    if self._pcaIDs[numLines] in self._phenoDict:
-                        # if the key value matches the current group we are searching for..
-                        if self._phenoDict.get(self._pcaIDs[numLines]) == self._pcaGroups[numGroups]:
-                            tempX.append(self._xVals[numLines])
-                            tempY.append(self._yVals[numLines])
+            self._phenoFile = File(self._phenoData['fileName'], self._phenoData['fileType'], self._phenoData['data'])
+            self._dataDict.update({
+                'PhenoFile' : self._phenoFile,
+                'PhenoIDs' : self._phenoIDs,
+                'PhenoColumn' : self._phenoCol
+            })
 
-        '''
+            return  self._dataDict
 
         # counting the columns
     def __countCols(self, filePath):
@@ -202,14 +207,22 @@ class pcaCreator(MyFrame1):
         self._file.close()
         return len(self._list)
 
-    def __getCol(self, fileType, filePath, colNum, numLines):
+    def __getPcaCol(self, filePath, colNum, numLines):
         self._realList = []
         file = open(filePath)
-        if fileType == 'PCA':
-            file.readline()
+        file.readline()
         for i in range(numLines-1):
             tempList = file.readline().split()
             self._realList.append(float(tempList[colNum]))
+        file.close()
+        return self._realList
+
+    def __getPhenoCol(self, filePath, colNum, numLines):
+        self._realList = []
+        file = open(filePath)
+        for i in range(numLines):
+            tempList = file.readline().split()
+            self._realList.append(tempList[colNum])
         file.close()
         return self._realList
 
