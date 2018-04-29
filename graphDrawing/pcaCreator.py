@@ -1,4 +1,4 @@
-from graphDrawing.pcaCreatorGUI import *
+from fileManagement.pcaCreatorGUI import *
 
 from fileManagement.fileImporter import fileImporter
 from fileManagement.file import *
