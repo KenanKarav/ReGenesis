@@ -14,45 +14,45 @@ class AdmixtureIndividual:
 
 
 ##############################Mutators##################################################
-    def setid(self, id):
+    def setId(self, id):
         self.ID = id
 
-    def setname(self, name):
+    def setName(self, name):
         self.Name = name
 
-    def setphenotypedata(self, phenoValues):
+    def setPhenotypedata(self, phenoValues):
         self.phenotypeData = phenoValues
 
-    def setvisibility(self, visible):
+    def setVisibility(self, visible):
         self.isVisible = visible
 
 #############################Accessors##################################################
-    def getpopratios(self):
+    def getPopRatios(self):
         return self.populationRatios
 
-    def getid(self):
+    def getID(self):
         return self.ID
 
-    def getname(self):
+    def getName(self):
         return self.Name
 
-    def getphenotypedata(self):
+    def getPhenotypeData(self):
         return self.phenotypeData
 
-    def getpopgroups(self):
+    def getPopGroups(self):
         return self.populationGroups
 
-    def getnumofancestors(self):
+    def getNumOfAncestors(self):
         return len(self.populationGroups)
 
-    def getvisibility(self):
+    def getVisibility(self):
         return self.isVisible
 
-    def getancestrydictionary(self):
+    def getAncestryDictionary(self):
         return self.ancestryDict
 
 #############################Methods######################################################
-    def buildancestrydictonary(self):
+    def buildAncestryDictonary(self):
         numAncestors = len(self.populationRatios)
         for loop in range(0, numAncestors):
             key = loop
