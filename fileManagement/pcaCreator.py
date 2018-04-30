@@ -8,7 +8,7 @@ class pcaCreator(MyFrame1):
     def __init__(self, parent):
         MyFrame1.__init__(self, parent)
         self._isPheno = False
-
+        self._parent = parent
     def ImportPcaFile( self, event ):
         #run the file validity checker
         self._pcaFilePath = self.pca_pcaImport.Path
@@ -105,7 +105,9 @@ class pcaCreator(MyFrame1):
 
     def Cancel(self, event):
         # close the window
-        app.ExitMainLoop()
+        self._parent.Enable()
+        self._parent.Show()
+        self.Close()
 
     def Reset(self, event):
         #reset the form to its original state
@@ -249,8 +251,4 @@ class pcaCreator(MyFrame1):
                 groupList.append(data)
         return groupList
 
-app = wx.App(False)
-frame = pcaCreator(None)
-frame.Show(True)
 
-app.MainLoop()

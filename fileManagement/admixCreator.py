@@ -8,7 +8,7 @@ class admixCreator(AdmixFrame):
     def __init__(self, parent):
         AdmixFrame.__init__(self, parent)
         self.__isPheno = False;
-
+        self._parent = parent
     def OnFileChange_ImportDataFile(self, event):
         #Validate Imported File
         self._admixFilePath = self.filePicker_DataFile.Path
@@ -86,7 +86,9 @@ class admixCreator(AdmixFrame):
             self.__isPheno = True
 
     def OnBtnClick_Cancel(self, event):
-        app.ExitMainLoop()
+        self._parent.Enable()
+        self._parent.Show()
+        self.Close()
 
     def OnBtnClick_Reset(self, event):
         #Clear All Text Fields
@@ -149,8 +151,9 @@ class admixCreator(AdmixFrame):
                 'PhenoIDs' : self._phenoIDs,
                 'PhenoColumn' : self._phenoCol
             })
-
-        app.ExitMainLoop()
+        self._parent.Enable()
+        self._parent.Show()
+        self.Close()
 
 
     #Counting The Columns
@@ -208,7 +211,3 @@ class admixCreator(AdmixFrame):
         return groupList
 
 
-app = wx.App(False)
-frame = admixCreator(None)
-frame.Show(True)
-app.MainLoop()

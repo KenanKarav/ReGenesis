@@ -1,7 +1,8 @@
 import numpy as np
 import wx
 import wx.lib.mixins.inspection as wit
-
+from fileManagement.pcaCreator import pcaCreator as pcaCreator
+from fileManagement.admixCreator import admixCreator as admixCreator
 if 'phoenix' in wx.PlatformInfo:
     import wx.lib.agw.aui as aui
 else:
@@ -61,10 +62,16 @@ class graphManager(wx.Frame):
         return
     # Virtual event handlers, overide them in your derived class
     def newPCAOnMenuSelection(self, event):
-        event.Skip()
+        self.child = pcaCreator(self)
+        self.Disable()
+        self.child.Show()
+
 
     def newAdmixtureOnMenuSelection(self, event):
-        event.Skip()
+        self.child = admixCreator(self)
+        self.Disable()
+        self.child.Show()
+
 if __name__ == "__main__":
     app = wx.App(False)
     frame = graphManager(None)
