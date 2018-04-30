@@ -28,22 +28,48 @@ class graphManager(wx.Frame):
         self.SetSizer(sizer)
         self.Layout()
         self.MenuBar = wx.MenuBar(0)
-        self.Menu = wx.Menu()
-        self.newPCA = wx.MenuItem(self.Menu, wx.ID_ANY, u"PCA Graph", wx.EmptyString, wx.ITEM_NORMAL)
-        self.Menu.Append(self.newPCA)
 
-        self.newAdmixture = wx.MenuItem(self.Menu, wx.ID_ANY, u"Admixture Graph", wx.EmptyString, wx.ITEM_NORMAL)
-        self.Menu.Append(self.newAdmixture)
+        #new graph menu options
+        self.newGraph = wx.Menu()
+        self.newPCA = wx.MenuItem(self.newGraph, wx.ID_ANY, u"PCA Graph", wx.EmptyString, wx.ITEM_NORMAL)
+        self.newGraph.Append(self.newPCA)
 
-        self.MenuBar.Append(self.Menu, u"New Graph")
+        self.newAdmixture = wx.MenuItem(self.newGraph, wx.ID_ANY, u"Admixture Graph", wx.EmptyString, wx.ITEM_NORMAL)
+        self.newGraph.Append(self.newAdmixture)
+
+        self.MenuBar.Append(self.newGraph, u"New Graph")
+
+
+        #Manage Graphs Menu
+        self.manageGraphs = wx.Menu()
+
+        self.saveGraph = wx.MenuItem(self.manageGraphs, wx.ID_ANY, u"Save", wx.EmptyString, wx.ITEM_NORMAL)
+        self.manageGraphs.Append(self.saveGraph)
+
+        self.loadGraph = wx.MenuItem(self.manageGraphs, wx.ID_ANY, u"Load", wx.EmptyString, wx.ITEM_NORMAL)
+        self.manageGraphs.Append(self.loadGraph)
+
+        self.exportGraph = wx.MenuItem(self.manageGraphs, wx.ID_ANY, u"Export", wx.EmptyString, wx.ITEM_NORMAL)
+        self.manageGraphs.Append(self.exportGraph)
+
+        self.MenuBar.Append(self.manageGraphs, u"Manage Graphs")
 
         self.SetMenuBar(self.MenuBar)
 
         self.Centre(wx.BOTH)
 
         # Connect Events
+        # New graph events
         self.Bind(wx.EVT_MENU, self.newPCAOnMenuSelection, id=self.newPCA.GetId())
         self.Bind(wx.EVT_MENU, self.newAdmixtureOnMenuSelection, id=self.newAdmixture.GetId())
+
+        # Manage graph events
+        self.Bind(wx.EVT_MENU, self.saveGraphOnMenuSelection, id=self.saveGraph.GetId())
+        self.Bind(wx.EVT_MENU, self.loadGraphOnMenuSelection, id=self.loadGraph.GetId())
+        self.Bind(wx.EVT_MENU, self.exportGraphOnMenuSelection, id=self.exportGraph.GetId())
+
+
+
 
     def __del__(self):
         pass
@@ -51,30 +77,42 @@ class graphManager(wx.Frame):
     def CreatePlot(self):
         self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
         self.axes = self.figure.add_subplot(111)
-        x = np.arange(0, 6, .01)
-        y = np.sin(x ** 2) * np.exp(-x)
-        self.axes.plot(x, y)
+
 
         # Add it to the panel created in wxFormBuilder
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
         self.toolbar = NavigationToolbar(self.canvas)
         self.toolbar.Realize()
+        x = np.arange(0, 6, .01)
+        y = np.sin(x ** 2) * np.exp(-x)
+        self.axes.plot(x, y)
         return
+
+
     # Virtual event handlers, overide them in your derived class
     def newPCAOnMenuSelection(self, event):
         self.child = pcaCreator(self)
         self.Disable()
         self.child.Show()
 
-
     def newAdmixtureOnMenuSelection(self, event):
         self.child = admixCreator(self)
         self.Disable()
         self.child.Show()
 
+    def saveGraphOnMenuSelection(self, event):
+        print("save graph event")
+
+    def loadGraphOnMenuSelection(self, event):
+        print("load graph event")
+
+    def exportGraphOnMenuSelection(self, event):
+        print("export graph event")
+
+
 if __name__ == "__main__":
     app = wx.App(False)
     frame = graphManager(None)
-    frame.CreatePlot()
+    #frame.CreatePlot()
     frame.Show()
     app.MainLoop()

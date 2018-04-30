@@ -161,6 +161,8 @@ class pcaCreator(MyFrame1):
         }
         if not self._isPheno:
             #return file object
+
+            # TODO change return to a callback to parent
             return self._dataDict
         else:
             # retrieving IDs from PCA file
@@ -192,8 +194,8 @@ class pcaCreator(MyFrame1):
                 'PhenoIDs' : self._phenoIDs,
                 'PhenoColumn' : self._phenoCol
             })
-
-            return  self._dataDict
+            # TODO change return to a callback to parent
+            return self._dataDict
 
         # counting the columns
     def __countCols(self, filePath):
