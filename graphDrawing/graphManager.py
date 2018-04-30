@@ -1,4 +1,4 @@
-
+import numpy as np
 import wx
 import wx.lib.mixins.inspection as wit
 
@@ -12,57 +12,62 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
 
 
-class Plot(wx.Panel):
-    def __init__(self, parent, id=-1, dpi=None, **kwargs):
-        wx.Panel.__init__(self, parent, id=id, **kwargs)
-        self.figure = mpl.figure.Figure(dpi=dpi, figsize=(2, 2))
-        self.canvas = FigureCanvas(self, -1, self.figure)
-        self.toolbar = NavigationToolbar(self.canvas)
-        self.toolbar.Realize()
 
-        # adding components
-        self.menubar = wx.MenuBar( 0 )
+
+class graphManager(wx.Frame):
+    def __init__(self, parent):
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"ReGenesis", pos=wx.DefaultPosition,
+                          size=wx.Size(500, 300), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+
+        self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-
-        sizer.Add(self.canvas, 1, wx.EXPAND)
-        sizer.Add(self.toolbar, 0, wx.LEFT | wx.EXPAND)
+        self.renderer = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,wx.TAB_TRAVERSAL)
+        sizer.Add(self.renderer, 1, wx.EXPAND | wx.ALL, 5)
         self.SetSizer(sizer)
+        self.Layout()
+        self.MenuBar = wx.MenuBar(0)
+        self.Menu = wx.Menu()
+        self.newPCA = wx.MenuItem(self.Menu, wx.ID_ANY, u"PCA Graph", wx.EmptyString, wx.ITEM_NORMAL)
+        self.Menu.Append(self.newPCA)
 
+        self.newAdmixture = wx.MenuItem(self.Menu, wx.ID_ANY, u"Admixture Graph", wx.EmptyString, wx.ITEM_NORMAL)
+        self.Menu.Append(self.newAdmixture)
 
-class PlotNotebook(wx.Panel):
-    def __init__(self, parent, id=-1):
-        wx.Panel.__init__(self, parent, id=id)
-        self.nb = aui.AuiNotebook(self)
-        sizer = wx.BoxSizer()
-        sizer.Add(self.nb, 1, wx.EXPAND)
-        self.SetSizer(sizer)
+        self.MenuBar.Append(self.Menu, u"New Graph")
 
-    def add(self, name="plot"):
-        page = Plot(self.nb)
-        self.nb.AddPage(page, name)
-        return page.figure
+        self.SetMenuBar(self.MenuBar)
 
-class Menu(wx.Frame):
-    def __init__(self,parent, id=-1):
-        frame = wx.Frame(self, -1, 'ReGenesis')
-        self.MenuBar = wx.MenuBar()
+        self.Centre(wx.BOTH)
 
-def render():
-    # alternatively you could use
-    #app = wx.App()
-    # InspectableApp is a great debug tool, see:
-    # http://wiki.wxpython.org/Widget%20Inspection%20Tool
-    app = wit.InspectableApp()
+        # Connect Events
+        self.Bind(wx.EVT_MENU, self.newPCAOnMenuSelection, id=self.newPCA.GetId())
+        self.Bind(wx.EVT_MENU, self.newAdmixtureOnMenuSelection, id=self.newAdmixture.GetId())
 
-    frame = wx.Frame(None, -1 , "ReGenesis")
-    plotter = PlotNotebook(frame)
-    axes1 = plotter.add('figure 1').gca()
-    axes1.plot([1, 2, 3], [2, 1, 4])
-    axes2 = plotter.add('figure 2').gca()
-    axes2.plot([1, 2, 3, 4, 5], [2, 1, 4, 2, 3])
+    def __del__(self):
+        pass
+
+    def CreatePlot(self):
+        self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
+        self.axes = self.figure.add_subplot(111)
+        x = np.arange(0, 6, .01)
+        y = np.sin(x ** 2) * np.exp(-x)
+        self.axes.plot(x, y)
+
+        # Add it to the panel created in wxFormBuilder
+        self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
+        self.toolbar = NavigationToolbar(self.canvas)
+        self.toolbar.Realize()
+        return
+    # Virtual event handlers, overide them in your derived class
+    def newPCAOnMenuSelection(self, event):
+        event.Skip()
+
+    def newAdmixtureOnMenuSelection(self, event):
+        event.Skip()
+if __name__ == "__main__":
+    app = wx.App(False)
+    frame = graphManager(None)
+    frame.CreatePlot()
     frame.Show()
     app.MainLoop()
-
-if __name__ == "__main__":
-    render()
