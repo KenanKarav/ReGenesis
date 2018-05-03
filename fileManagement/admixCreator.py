@@ -129,6 +129,7 @@ class admixCreator(AdmixFrame):
 
         if not self.__isPheno:
             #Return Dictionary with a File Object, IDs and data
+            # TODO change return to a callback to parent
             return self._dataDict
 
         else:
@@ -151,6 +152,9 @@ class admixCreator(AdmixFrame):
                 'PhenoIDs' : self._phenoIDs,
                 'PhenoColumn' : self._phenoCol
             })
+            # TODO change return to a callback to parent
+            return self._dataDict
+
         self._parent.Enable()
         self._parent.Show()
         self.Close()
@@ -199,7 +203,7 @@ class admixCreator(AdmixFrame):
         file.close()
         return self._realList
 
-    # finds and stores each group from a list in a seperate list
+    # finds and stores each group from a list in a separate list
     def __findGroups(self, dataList):
         groupList = []
         for i in range(len(dataList)):
