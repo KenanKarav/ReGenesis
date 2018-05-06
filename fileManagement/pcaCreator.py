@@ -9,6 +9,7 @@ class pcaCreator(MyFrame1):
         MyFrame1.__init__(self, parent)
         self._isPheno = False
         self._parent = parent
+        self.dimension = 2
     def ImportPcaFile( self, event ):
         #run the file validity checker
         self._pcaFilePath = self.pca_pcaImport.Path
@@ -80,7 +81,7 @@ class pcaCreator(MyFrame1):
             errDlg = wx.MessageDialog(parent=self, message="Please select a valid file type",
                                       caption="Invalid file chosen", style=wx.ICON_ERROR)
             val = errDlg.ShowModal()
-            errDlg.Show()
+            errDlg.ShowModal()
             self.pca_phenoImport.Path = ''
 
         else:
@@ -91,7 +92,7 @@ class pcaCreator(MyFrame1):
             # run the file importer
             #self._phenoData = {}
             self._phenoData = fileImporter.ImportFile(fileImporter, self._phenoFilePath)
-            print(type(self._phenoData))
+
 
             # populate the phenotype choice boxes
             self._phenoNumCols = self.__countCols(self._phenoFilePath)
@@ -105,6 +106,7 @@ class pcaCreator(MyFrame1):
 
     def Cancel(self, event):
         # close the window
+        self.result = "CANCEL"
         self._parent.Enable()
         self._parent.Show()
         self.Close()
@@ -135,6 +137,7 @@ class pcaCreator(MyFrame1):
 
     def Confirm(self, event):
         # extracting PCA data info
+        self.result = "CONFIRM"
         self._numLines = self.__fileLength(self._pcaFilePath)
 
         self._num1 = self.pca_col1.Selection +1
@@ -144,7 +147,7 @@ class pcaCreator(MyFrame1):
         if self.pca_col3.Selection >-1:
             self._num3 = self.pca_col3.Selection+1
             self._zVals = self.__getPcaCol(self._pcaFilePath, self._num3, self._numLines)
-
+            self.dimension = 3
         self._xVals = self.__getPcaCol(self._pcaFilePath, self._num1, self._numLines)
         self._yVals = self.__getPcaCol(self._pcaFilePath, self._num2, self._numLines)
 
@@ -156,14 +159,15 @@ class pcaCreator(MyFrame1):
             'PcaIDs' : self._pcaIDs,
             'x' : self._xVals,
             'y' : self._yVals,
-            'z' : self._zVals
-
+            'z' : self._zVals,
+            'dimension' : self.dimension
         }
         if not self._isPheno:
             #return file object
 
-            # TODO change return to a callback to parent
-            return self._dataDict
+            self._parent.Enable()
+            self._parent.Show()
+            self.Close()
         else:
             # retrieving IDs from PCA file
             self._pcaIDs = self.__getIDs(self._pcaFilePath, 0, self._numLines)
@@ -183,9 +187,9 @@ class pcaCreator(MyFrame1):
                 self._phenoIDs.append(tempID_1[i] + ':' + tempID_2[i])
 
             # retrieving data from chosen phenotype column and storing in list
-            print(type(self._phenoData))
+
             self._phenoCol = self.__getPhenoCol(self._phenoFilePath, self._num, self._numLines)
-            print(type(self._phenoData))
+
 
 
             self._phenoFile = File(self._phenoData['fileName'], self._phenoData['fileType'], self._phenoData['data'])
@@ -194,8 +198,9 @@ class pcaCreator(MyFrame1):
                 'PhenoIDs' : self._phenoIDs,
                 'PhenoColumn' : self._phenoCol
             })
-            # TODO change return to a callback to parent
-            return self._dataDict
+            self._parent.Enable()
+            self._parent.Show()
+            self.Close()
 
         # counting the columns
     def __countCols(self, filePath):

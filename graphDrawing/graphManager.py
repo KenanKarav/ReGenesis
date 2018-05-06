@@ -3,6 +3,7 @@ import wx
 import wx.lib.mixins.inspection as wit
 from fileManagement.pcaCreator import pcaCreator as pcaCreator
 from fileManagement.admixCreator import admixCreator as admixCreator
+from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
 if 'phoenix' in wx.PlatformInfo:
     import wx.lib.agw.aui as aui
 else:
@@ -18,14 +19,14 @@ from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Navigat
 class graphManager(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"ReGenesis", pos=wx.DefaultPosition,
-                          size=wx.Size(500, 300), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          size=wx.Size(650, 550), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.renderer = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,wx.TAB_TRAVERSAL)
-        sizer.Add(self.renderer, 1, wx.EXPAND | wx.ALL, 5)
-        self.SetSizer(sizer)
+        self.sizer.Add(self.renderer, 1, wx.EXPAND | wx.ALL, 5)
+        self.SetSizer(self.sizer)
         self.Layout()
         self.MenuBar = wx.MenuBar(0)
 
@@ -74,31 +75,46 @@ class graphManager(wx.Frame):
     def __del__(self):
         pass
 
-    def CreatePlot(self):
-        self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
-        self.axes = self.figure.add_subplot(111)
+    def CreatePCAPlot(self, data):
 
-
+        pca = pcaGraph(data)
+        pcaGroups = pca.findGroupData()
+        if not hasattr(self, 'figure'):
+            self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
+            self.axes = self.figure.add_subplot(111)
+        else:
+            self.figure.clf()
+            self.axes = self.figure.add_subplot(111)
         # Add it to the panel created in wxFormBuilder
-        self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
-        self.toolbar = NavigationToolbar(self.canvas)
-        self.toolbar.Realize()
-        x = np.arange(0, 6, .01)
-        y = np.sin(x ** 2) * np.exp(-x)
-        self.axes.plot(x, y)
-        return
 
+
+        if pca.dimension == 2:
+            x = []
+            y = []
+
+            for group in pcaGroups:
+                x = pcaGroups[group]['x']
+                y = pcaGroups[group]['y']
+
+                self.axes.scatter(x, y, label=group, s=2)
+        self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
+
+        self.toolbar = NavigationToolbar(self.canvas)
+        return
 
     # Virtual event handlers, overide them in your derived class
     def newPCAOnMenuSelection(self, event):
         self.child = pcaCreator(self)
         self.Disable()
-        self.child.Show()
-
+        self.child.ShowModal()
+        if self.child.result == "CANCEL":
+            event.Skip()
+        elif self.child.result == "CONFIRM":
+            self.CreatePCAPlot(self.child._dataDict)
     def newAdmixtureOnMenuSelection(self, event):
         self.child = admixCreator(self)
         self.Disable()
-        self.child.Show()
+        self.child.ShowModal()
 
     def saveGraphOnMenuSelection(self, event):
         print("save graph event")

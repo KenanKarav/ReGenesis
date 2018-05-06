@@ -15,7 +15,7 @@ import wx.xrc
 ## Class AdmixFrame
 ###########################################################################
 
-class AdmixFrame(wx.Frame):
+class AdmixFrame(wx.Dialog):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Admix Creator", pos=wx.DefaultPosition,
