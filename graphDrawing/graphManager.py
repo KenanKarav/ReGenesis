@@ -1,6 +1,9 @@
 import numpy as np
 import wx
 import wx.lib.mixins.inspection as wit
+
+import json
+
 from fileManagement.pcaCreator import pcaCreator as pcaCreator
 from fileManagement.admixCreator import admixCreator as admixCreator
 from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
@@ -77,8 +80,12 @@ class graphManager(wx.Frame):
 
     def CreatePCAPlot(self, data):
 
-        pca = pcaGraph(data)
-        pcaGroups = pca.findGroupData()
+        self.pca = pcaGraph(data)
+        pcaData = self.pca.findPcaData()
+        self.plotPcaData(pcaData)
+
+
+    def plotPcaData(self, pcaData):
         if not hasattr(self, 'figure'):
             self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
             self.axes = self.figure.add_subplot(111)
@@ -88,13 +95,13 @@ class graphManager(wx.Frame):
         # Add it to the panel created in wxFormBuilder
 
 
-        if pca.dimension == 2:
+       # if self.pca.dimension == 2:
             x = []
             y = []
 
-            for group in pcaGroups:
-                x = pcaGroups[group]['x']
-                y = pcaGroups[group]['y']
+            for group in pcaData:
+                x = pcaData[group]['x']
+                y = pcaData[group]['y']
 
                 self.axes.scatter(x, y, label=group, s=2)
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
@@ -117,10 +124,51 @@ class graphManager(wx.Frame):
         self.child.ShowModal()
 
     def saveGraphOnMenuSelection(self, event):
-        print("save graph event")
+        with wx.FileDialog(self, "Save Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
+                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return  # the user changed their mind
+
+            # save the current contents in the file
+            pathname = fileDialog.GetPath()
+            try:
+                with open(pathname, 'w', encoding='utf-8') as file:
+                    self.doSaveData(file)
+            except IOError:
+                wx.LogError("Cannot save current data in file '%s'." % pathname)
+
+    def doSaveData(self, f):
+        # find dictionary of values to plot
+        pcaData = self.pca.findPcaData()
+        json.dump(pcaData, f, ensure_ascii=False)
+        f.close()
 
     def loadGraphOnMenuSelection(self, event):
-        print("load graph event")
+        '''if self.contentNotSaved:
+            if wx.MessageBox("Current content has not been saved! Proceed?", "Please confirm",
+                             wx.ICON_QUESTION | wx.YES_NO, self) == wx.NO:
+                return'''
+
+            # otherwise ask the user what new file to open
+        with wx.FileDialog(self, "Load Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
+                           style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
+
+            if fileDialog.ShowModal() == wx.ID_CANCEL:
+                return  # the user changed their mind
+
+            # Proceed loading the file chosen by the user
+            pathname = fileDialog.GetPath()
+            try:
+                with open(pathname, 'r') as file:
+                    self.doLoadData(file)
+            except IOError:
+                wx.LogError("Cannot open file '%s'." % file)
+
+    def doLoadData(self,f):
+        pcaData = json.load(f)
+        self.plotPcaData(pcaData)
+        f.close()
 
     def exportGraphOnMenuSelection(self, event):
         print("export graph event")

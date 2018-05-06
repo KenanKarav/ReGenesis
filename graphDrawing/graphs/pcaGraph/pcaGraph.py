@@ -6,7 +6,10 @@ class pcaGraph():
         self.xVals = data['x']
         self.yVals = data['y']
         self.zVals = data['z']
-        if data['PhenoIDs']:
+
+        self.hasPheno = False
+        if 'PhenoIDs' in data:
+            self.hasPheno = True
             self.phenoIDs = data['PhenoIDs']
             self.phenoCol = data['PhenoColumn']
             self.pcaGroups = self.genListGroups(self.phenoCol)
@@ -26,27 +29,35 @@ class pcaGraph():
                 groupList.append(data)
         return groupList
 
-    def findGroupData(self):
-        self.pcaGroupDict = {}
-        # looping through all the groups
-        for numGroups in range(len(self.pcaGroups)):
-            tempX = []
-            tempY = []
-            tempZ = []
-            for numLines in range(len(self.pcaIDs)):
-                # if the ID from the pca file exists in the phenotype file
-                if self.pcaIDs[numLines] in self.phenoDict:
-                    # if the key value matches the current group we are searching for..
-                    if self.phenoDict.get(self.pcaIDs[numLines]) == self.pcaGroups[numGroups]:
-                        tempX.append(self.xVals[numLines])
-                        tempY.append(self.yVals[numLines])
-                        if self.dimension == 3:
-                            tempZ.append(self.zVals[numLines])
-            # plotting the graph
-            if len(tempX) > 0:
-                self.pcaGroupDict.update({
-                    self.pcaGroups[numGroups] : {'x': tempX,
-                                                 'y': tempY,
-                                                 'z': tempZ}
-                })
-        return self.pcaGroupDict
+    def findPcaData(self):
+        self.pcaDataDict = {}
+        if self.hasPheno:
+            # looping through all the groups
+            for numGroups in range(len(self.pcaGroups)):
+                tempX = []
+                tempY = []
+                tempZ = []
+                for numLines in range(len(self.pcaIDs)):
+                    # if the ID from the pca file exists in the phenotype file
+                    if self.pcaIDs[numLines] in self.phenoDict:
+                        # if the key value matches the current group we are searching for..
+                        if self.phenoDict.get(self.pcaIDs[numLines]) == self.pcaGroups[numGroups]:
+                            tempX.append(self.xVals[numLines])
+                            tempY.append(self.yVals[numLines])
+                            if self.dimension == 3:
+                                tempZ.append(self.zVals[numLines])
+                # plotting the graph
+                if len(tempX) > 0:
+                    self.pcaDataDict.update({
+                        self.pcaGroups[numGroups] : {'x': tempX,
+                                                     'y': tempY,
+                                                     'z': tempZ}
+                    })
+        else:
+            self.pcaDataDict.update({
+                "ungrouped" :  {'x': self.xVals,
+                                'y': self.yVals,
+                                'z': self.zVals}
+            })
+
+        return self.pcaDataDict
