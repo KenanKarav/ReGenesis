@@ -9,6 +9,7 @@ class admixCreator(AdmixFrame):
         AdmixFrame.__init__(self, parent)
         self.__isPheno = False;
         self._parent = parent
+
     def OnFileChange_ImportDataFile(self, event):
         #Validate Imported File
         self._admixFilePath = self.filePicker_DataFile.Path
