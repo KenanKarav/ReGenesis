@@ -1,0 +1,15 @@
+1 Kenan Green
+2 Aimee Blue
+3 Dhevan Red
+4 Regenesis Yellow
+5 Profesional Orange
+6 Practice Purple
+7 EIE Brown
+8 Wits Black
+9 University White
+10 Studying Maroon
+11 I Cyan
+12 Am Magenta
+13 Tired Grey
+14 Hungry Silver
+15 Potato Gold

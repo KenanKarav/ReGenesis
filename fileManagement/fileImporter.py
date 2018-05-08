@@ -8,7 +8,7 @@ class fileImporter():
 
 
         # counting number of lines in file
-    def __fileLength(self, filePath):
+    def FileLength(self, filePath):
         self._file = open(filePath)
         for i, line in enumerate(self._file):
             pass
@@ -17,7 +17,7 @@ class fileImporter():
 
         # generating a list of lists from data in file
         # each sublist is a row in the file
-    def __genDataList(self, filePath, length):
+    def GenDataList(self, filePath, length):
         self._file = open(filePath)
         dataList = []
         for i in range(0, length):
@@ -67,11 +67,28 @@ class fileImporter():
             return False
 
     def ImportFile(self, filePath):
+        # extracting file name with extension
+        self._fileName = os.path.basename(filePath)
+
+        # determining the file type
+        self._isPca = self._fileName.find(".evec")
+        self._isAdmix = self._fileName.find(".Q.")
+        self._isFam = self._fileName.find(".fam")
+        self._isPheno = self._fileName.find(".phe")
+        if self._isAdmix > -1:
+            self._fileType = 'Admixture'
+        elif self._isFam > -1:
+            self._fileType = 'Fam'
+        elif self._isPheno > -1:
+            self._fileType = 'Phenotype'
+        elif self._isPca > -1:
+            self._fileType = 'PCA'
+
         # calculating file length
-        self._length = self.__fileLength(self, filePath)
+        self._length = self.FileLength(self, filePath)
 
         # generating list of data from file
-        self._dataList = self.__genDataList(self, filePath, self._length)
+        self._dataList = self.GenDataList(self, filePath, self._length)
 
         # defining dictionary of data
         self._dataDictionary = {
