@@ -78,7 +78,7 @@ class admixCreator(AdmixFrame):
             #print(self._phenoData)
 
             #Populate Phenotype Choice Boxes
-            self._phenoNumCols = self.__countCols(self._pheFilePath)
+            self._phenoNumCols = self.CountCols(self._pheFilePath)
 
             for x in range(1, self._phenoNumCols+1):
                 self.choiceBox_PheColumn.Append('Column ' + str(x))
@@ -109,8 +109,8 @@ class admixCreator(AdmixFrame):
         self.__isPheno = False
 
     def OnBtnClick_Confirm(self, event):
-        self._numLines = self.__fileLength(self._admixFilePath)
-        self._admixIDs = self.__getIDs(self._famFilePath, self._numLines)
+        self._numLines = self.FileLength(self._admixFilePath)
+        self._admixIDs = self.GetIDs(self._famFilePath, self._numLines)
 
         self._admixFile = File(self._admixData['fileName'], self._admixData['fileType'], self._admixData['data'])
 
@@ -119,12 +119,12 @@ class admixCreator(AdmixFrame):
             'AdmixIDs': self._admixIDs
         }
 
-        numColumns = self.__countCols(self._admixFilePath)
+        numColumns = self.CountCols(self._admixFilePath)
 
         for i in range(1, numColumns+1):
             ancestryKey = 'Ancestry'+str(i)
             self._dataDict.update({
-                ancestryKey : self._getAdmixColumn(self._admixFilePath,i-1,self._numLines)
+                ancestryKey : self.GetAdmixColumn(self._admixFilePath,i,self._numLines)
             })
 
 
@@ -136,15 +136,15 @@ class admixCreator(AdmixFrame):
         else:
             #Retrieving Pheno Column Selection
             self._num = self.choiceBox_PheColumn.Selection
-            self._numLines = self.__fileLength(self._pheFilePath)
+            self._numLines = self.FileLength(self._pheFilePath)
             # store all admix data IDs in a list, loop through checking for the position of the ID in the phenotype file
             # plot each group seperately
             self._phenoIDs= []
-            self._phenoIDs = self.__getIDs(self._pheFilePath, self._numLines)
+            self._phenoIDs = self.GetIDs(self._pheFilePath, self._numLines)
 
             # retrieving data from chosen phenotype column and storing in list
             print(type(self._phenoData))
-            self._phenoCol = self.__getColumn(self._pheFilePath, self._num, self._numLines)
+            self._phenoCol = self.GetColumn(self._pheFilePath, self._num+1, self._numLines)
             print(type(self._phenoData))
 
             self._phenoFile = File(self._phenoData['fileName'], self._phenoData['fileType'], self._phenoData['data'])
@@ -162,40 +162,40 @@ class admixCreator(AdmixFrame):
 
 
     #Counting The Columns
-    def __countCols(self, filePath):
+    def CountCols(self, filePath):
         self._file = open(filePath)
         self._file.readline()
         self._list = self._file.readline().split()
         self._file.close()
         return len(self._list)
 
-    def _getAdmixColumn(self, filePath, colNum, numLines):
+    def GetAdmixColumn(self, filePath, colNum, numLines):
         self._realList = []
         file = open(filePath)
         for i in range(numLines):
             tempList = file.readline().split()
-            self._realList.append(float(tempList[colNum]))
+            self._realList.append(float(tempList[colNum-1]))
         file.close()
         return self._realList
 
-    def __getColumn(self, filePath, colNum, numLines):
+    def GetColumn(self, filePath, colNum, numLines):
         self._realList = []
         file = open(filePath)
         for i in range(numLines):
             tempList = file.readline().split()
-            self._realList.append(tempList[colNum])
+            self._realList.append(tempList[colNum-1])
         file.close()
         return self._realList
 
         # counting number of lines in file
-    def __fileLength(self, filePath):
+    def FileLength(self, filePath):
         self._file = open(filePath)
         for i, line in enumerate(self._file):
             pass
         self._file.close()
         return i + 1
 
-    def __getIDs(self, filePath, numLines):
+    def GetIDs(self, filePath, numLines):
         self._realList = []
         file = open(filePath)
         for i in range(numLines):
@@ -205,7 +205,7 @@ class admixCreator(AdmixFrame):
         return self._realList
 
     # finds and stores each group from a list in a separate list
-    def __findGroups(self, dataList):
+    def FindGroups(self, dataList):
         groupList = []
         for i in range(len(dataList)):
             data = dataList[i]
