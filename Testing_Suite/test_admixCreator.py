@@ -27,6 +27,7 @@ class TestAdmixCreator(unittest.TestCase):
         self.assertEqual(admixCreator.GetColumn(self, "AdmixtureTestFiles/small.fam", 4, 5), ['0', '0', '0', '0', '0'])
 
     def test_GetIDs(self):
+        # Test that it correctly gets the IDs in the first two columns, combines them into 1 string and then appends it into a list to be returned
         compareList = ['2431:NA19916', '2424:NA19835', '2469:NA20282', '2368:NA19703', '2425:NA19901']
         self.assertEqual(admixCreator.GetIDs(self, "AdmixtureTestFiles/small.fam", 5), compareList)
         self.assertEqual(admixCreator.GetIDs(self, "AdmixtureTestFiles/small.phe", 5), compareList)
