@@ -16,7 +16,7 @@ class pcaGraph():
             print("MADE GROUPS")
             self.phenoDict = {}
 
-            for i in range(len(self.phenoCol)-1):
+            for i in range(len(self.phenoCol)):
                 self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
 
     # finds and stores each group from a list in a seperate list
