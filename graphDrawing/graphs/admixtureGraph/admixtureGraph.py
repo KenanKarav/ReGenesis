@@ -5,16 +5,16 @@ class admixtureGraph():
             self.admixIDs = []
             self.ancestryDict = {}  # This will contain a Dict of lists
             self.numAncestries = 0
+
+            self.hasPheno = False
             self.phenoCol = []
             self.admixGroups = []
             self.phenoDict = {}
-            self.admixGroupDict = {}
-
+            self.admixDatadict = {}
 
 
         def __init__(self, data):
-            self.admixIDs = [data['AdmixIDs']]
-
+            self.admixIDs = data['AdmixIDs']
             self.ancestryDict = {}  # This will contain a Dict of lists
             self.numAncestries = 0
 
@@ -24,24 +24,26 @@ class admixtureGraph():
             while (checkAncestry == True):
                 ancestryKey = 'Ancestry' + str(i)
 
-                if data[ancestryKey]:
-                    self.ancestryDict.update({ancestryKey:[data[ancestryKey]]})
+                if ancestryKey in data:
+                    self.ancestryDict.update({ancestryKey:data[ancestryKey]})
                     i = i+1
                     self.numAncestries = self.numAncestries + 1
                 else:
                     checkAncestry = False
 
+            self.hasPheno = False
             # if there is phenotype data
-            if data['PhenoIDs']:
+            if 'PhenoIDs' in data:
+                self.hasPheno = True
                 self.phenoIDs = data['PhenoIDs']
                 self.phenoCol = data['PhenoColumn']
-                self.admixGroups = self.getGroupList(self.phenoCol)
+                self.admixGroups = self.genGroupList(self.phenoCol)
                 self.phenoDict = {}
                 for i in range(len(self.phenoCol)):
                     self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
-                self.admixGroupDict = {}
+                self.admixDatadict = self.genDataDictionary()
 
-        def getGroupList(self, column):
+        def genGroupList(self, column):
             groupList = []
             for i in range(len(column)):
                 data = column[i]
@@ -51,32 +53,55 @@ class admixtureGraph():
                     groupList.append(data)
             return groupList
 
-        def genGroupDictionary(self):
+        def genDataDictionary(self):
+            tempDataDict = {}
 
-            # looping through all the groups
-            for numGroups in range(len(self.admixGroups)):
-                tempAncestDict = {}
-                for numAncest in range(self.numAncestries):
-                    ancestryKey = 'Ancestry' + str(numAncest+1)
-                    tempList = []
-                    for numLines in range(len(self.admixIDs)):
-                        tempValue = None
-                        # if the ID from the FAM file exists in the phenotype file
-                        if self.admixIDs[numLines] in self.phenoDict:
-                            # if the key value matches the current group we are searching for..
-                            if self.phenoDict.get(self.admixIDs[numLines]) == self.admixGroups[numGroups]:
-                                tempValue = self.ancestryDict.get(ancestryKey)[numLines]
-                                tempList.append(tempValue)
+            if self.hasPheno == True:
+                # looping through all the groups
+                for numGroups in range(len(self.admixGroups)):
+                    tempAncestDict = {}
+                    for numAncest in range(self.numAncestries):
+                        ancestryKey = 'Ancestry' + str(numAncest+1)
+                        tempList = []
+                        for numLines in range(len(self.admixIDs)):
+                            tempValue = None
+                            # if the ID from the FAM file exists in the phenotype file
+                            if self.admixIDs[numLines] in self.phenoIDs:
+                                # if the key value matches the current group we are searching for..
+                                if self.phenoDict.get(self.admixIDs[numLines]) == self.admixGroups[numGroups]:
+                                    valueList = self.ancestryDict.get(ancestryKey)
+                                    tempValue = valueList[numLines]
+                                    tempList.append(tempValue)
 
-                    tempAncestDict.update({ancestryKey : tempList})
+                        tempAncestDict.update({ancestryKey : tempList})
 
-                self.admixGroupDict.update({
-                    self.admixGroups[numGroups]: tempAncestDict
-                })
+                    tempDataDict.update({
+                        self.admixGroups[numGroups]: tempAncestDict
+                    })
+                return tempDataDict
+            else:
+
+                tempDataDict = {'ungrouped' : self.ancestryDict}
+                return tempDataDict
+
+
+        # Accessors
+        def getAdmixIDs(self):
+            return self.admixIDs
+
+        def getAncestryDict(self):
+            return self.ancestryDict
+
+        def getNumAncestries(self):
+            return self.numAncestries
+
+        def getPhenoDict(self):
+            return self.phenoDict
 
         def getGroupList(self):
             return self.admixGroups
 
-        def getGroupDictionary(self):
-            return self.admixGroupDict
+        def getAdmixDataDict(self):
+            return self.getAdmixDataDict()
+
 
