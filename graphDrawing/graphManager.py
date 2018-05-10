@@ -7,6 +7,7 @@ import json
 from fileManagement.pcaCreator import pcaCreator as pcaCreator
 from fileManagement.admixCreator import admixCreator as admixCreator
 from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
+from graphDrawing.graphs.admixtureGraph.admixtureGraph import admixtureGraph as admixGraph
 if 'phoenix' in wx.PlatformInfo:
     import wx.lib.agw.aui as aui
 else:
@@ -22,13 +23,39 @@ from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Navigat
 class graphManager(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"ReGenesis", pos=wx.DefaultPosition,
-                          size=wx.Size(650, 550), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          size=wx.Size(650, 1000), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.renderer = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize,wx.TAB_TRAVERSAL)
+
+        self.renderer = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
         self.sizer.Add(self.renderer, 1, wx.EXPAND | wx.ALL, 5)
+
+
+        # toolbar
+        self.toolbar = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.toolbarSizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # adding buttons
+        self.saveButton = wx.Button(self.toolbar, wx.ID_ANY, u"Save Graph", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.saveButton, 0, wx.ALL, 5)
+
+        self.loadButton = wx.Button(self.toolbar, wx.ID_ANY, u"Load Graph", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.loadButton, 0, wx.ALL, 5)
+
+        self.zoomButton = wx.Button(self.toolbar, wx.ID_ANY, u"Zoom", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.zoomButton, 0, wx.ALL, 5)
+
+        self.appearanceButton = wx.Button(self.toolbar, wx.ID_ANY, u"Edit Graph Appearance", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.appearanceButton, 0, wx.ALL, 5)
+
+
+        self.toolbar.SetSizer(self.toolbarSizer)
+        self.toolbar.Layout()
+        self.toolbarSizer.Fit(self.toolbar)
+        self.sizer.Add(self.toolbar, 1, wx.EXPAND | wx.ALL, 5)
+
         self.SetSizer(self.sizer)
         self.Layout()
         self.MenuBar = wx.MenuBar(0)
@@ -42,6 +69,7 @@ class graphManager(wx.Frame):
         self.newGraph.Append(self.newAdmixture)
 
         self.MenuBar.Append(self.newGraph, u"New Graph")
+
 
 
         #Manage Graphs Menu
@@ -62,6 +90,10 @@ class graphManager(wx.Frame):
 
         self.Centre(wx.BOTH)
 
+
+
+
+
         # Connect Events
         # New graph events
         self.Bind(wx.EVT_MENU, self.newPCAOnMenuSelection, id=self.newPCA.GetId())
@@ -72,9 +104,13 @@ class graphManager(wx.Frame):
         self.Bind(wx.EVT_MENU, self.loadGraphOnMenuSelection, id=self.loadGraph.GetId())
         self.Bind(wx.EVT_MENU, self.exportGraphOnMenuSelection, id=self.exportGraph.GetId())
 
+        # Toolbar Events
 
-
-
+        self.saveButton.Bind(wx.EVT_BUTTON, self.saveGraphOnMenuSelection)
+        self.loadButton.Bind(wx.EVT_BUTTON, self.loadGraphOnMenuSelection)
+        self.zoomButton.Bind(wx.EVT_BUTTON, self.onZoomButtonClick)
+        self.appearanceButton.Bind(wx.EVT_BUTTON, self.onAppearanceButtonClick)
+        
     def __del__(self):
         pass
 
@@ -83,6 +119,10 @@ class graphManager(wx.Frame):
         self.pca = pcaGraph(data)
         pcaData = self.pca.findPcaData()
         self.plotPcaData(pcaData)
+
+    def CreateAdmixturePlot(self, data):
+
+        self.admix = admixGraph(data)
 
 
     def plotPcaData(self, pcaData):
@@ -95,18 +135,15 @@ class graphManager(wx.Frame):
         # Add it to the panel created in wxFormBuilder
 
 
-       # if self.pca.dimension == 2:
-            x = []
-            y = []
 
-            for group in pcaData:
-                x = pcaData[group]['x']
-                y = pcaData[group]['y']
+        for group in pcaData:
+            x = pcaData[group]['x']
+            y = pcaData[group]['y']
 
-                self.axes.scatter(x, y, label=group, s=2)
+            self.axes.scatter(x, y, label=group, s=2)
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
-
-        self.toolbar = NavigationToolbar(self.canvas)
+        self.navToolbar = NavigationToolbar(self.canvas)
+        self.navToolbar.Hide()
         return
 
     # Virtual event handlers, overide them in your derived class
@@ -118,10 +155,16 @@ class graphManager(wx.Frame):
             event.Skip()
         elif self.child.result == "CONFIRM":
             self.CreatePCAPlot(self.child._dataDict)
+
+
     def newAdmixtureOnMenuSelection(self, event):
         self.child = admixCreator(self)
         self.Disable()
         self.child.ShowModal()
+        if self.child.result == "CANCEL":
+            event.Skip()
+        elif self.child.result == "CONFIRM":
+            self.CreateAdmixturePlot(self.child._dataDict)
 
     def saveGraphOnMenuSelection(self, event):
         with wx.FileDialog(self, "Save Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
@@ -173,6 +216,12 @@ class graphManager(wx.Frame):
     def exportGraphOnMenuSelection(self, event):
         print("export graph event")
 
+    def onZoomButtonClick(self, event):
+
+        self.navToolbar.zoom()
+
+    def onAppearanceButtonClick(self, event):
+         print("do the things")
 
 if __name__ == "__main__":
     app = wx.App(False)

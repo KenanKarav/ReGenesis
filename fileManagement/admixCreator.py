@@ -87,6 +87,7 @@ class admixCreator(AdmixFrame):
             self.__isPheno = True
 
     def OnBtnClick_Cancel(self, event):
+        self.result = "CANCEL"
         self._parent.Enable()
         self._parent.Show()
         self.Close()
@@ -109,6 +110,7 @@ class admixCreator(AdmixFrame):
         self.__isPheno = False
 
     def OnBtnClick_Confirm(self, event):
+        self.result = "CONFIRM"
         self._numLines = self.FileLength(self._admixFilePath)
         self._admixIDs = self.GetIDs(self._famFilePath, self._numLines)
 
@@ -129,9 +131,9 @@ class admixCreator(AdmixFrame):
 
 
         if not self.__isPheno:
-            #Return Dictionary with a File Object, IDs and data
-            # TODO change return to a callback to parent
-            return self._dataDict
+            self._parent.Enable()
+            self._parent.Show()
+            self.Close()
 
         else:
             #Retrieving Pheno Column Selection
@@ -153,8 +155,9 @@ class admixCreator(AdmixFrame):
                 'PhenoIDs' : self._phenoIDs,
                 'PhenoColumn' : self._phenoCol
             })
-            # TODO change return to a callback to parent
-            return self._dataDict
+            self._parent.Enable()
+            self._parent.Show()
+            self.Close()
 
         self._parent.Enable()
         self._parent.Show()
