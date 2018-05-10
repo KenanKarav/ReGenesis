@@ -8,6 +8,8 @@ from fileManagement.pcaCreator import pcaCreator as pcaCreator
 from fileManagement.admixCreator import admixCreator as admixCreator
 from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
 from graphDrawing.graphs.admixtureGraph.admixtureGraph import admixtureGraph as admixGraph
+
+from graphDrawing.graphs.pcaGraph.pcaAppearance import PcaAppearance as pcaAppearance
 if 'phoenix' in wx.PlatformInfo:
     import wx.lib.agw.aui as aui
 else:
@@ -110,7 +112,7 @@ class graphManager(wx.Frame):
         self.loadButton.Bind(wx.EVT_BUTTON, self.loadGraphOnMenuSelection)
         self.zoomButton.Bind(wx.EVT_BUTTON, self.onZoomButtonClick)
         self.appearanceButton.Bind(wx.EVT_BUTTON, self.onAppearanceButtonClick)
-        
+
     def __del__(self):
         pass
 
@@ -135,12 +137,16 @@ class graphManager(wx.Frame):
         # Add it to the panel created in wxFormBuilder
 
 
-
+       # if self.pca.dimension == 2:
+        x = []
+        y = []
         for group in pcaData:
             x = pcaData[group]['x']
             y = pcaData[group]['y']
+            #print(group +",")
 
-            self.axes.scatter(x, y, label=group, s=2)
+            self.axes.scatter(x, y, label=group, s=5)
+        self.axes.legend()
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
         self.navToolbar = NavigationToolbar(self.canvas)
         self.navToolbar.Hide()
@@ -221,7 +227,14 @@ class graphManager(wx.Frame):
         self.navToolbar.zoom()
 
     def onAppearanceButtonClick(self, event):
-         print("do the things")
+        self.child = pcaAppearance(self)
+        self.Disable()
+        self.child.Show()
+        if self.child.result == "CANCEL":
+            event.Skip()
+        elif self.child.result == "CONFIRM":
+            print("RE-PLOT GRAPH")
+            #self.CreatePCAPlot(self.child._dataDict)
 
 if __name__ == "__main__":
     app = wx.App(False)

@@ -13,10 +13,11 @@ class pcaGraph():
             self.phenoIDs = data['PhenoIDs']
             self.phenoCol = data['PhenoColumn']
             self.pcaGroups = self.genListGroups(self.phenoCol)
+            print("MADE GROUPS")
             self.phenoDict = {}
+
             for i in range(len(self.phenoCol)-1):
                 self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
-
 
     # finds and stores each group from a list in a seperate list
     def genListGroups(self, column):
@@ -28,6 +29,9 @@ class pcaGraph():
             else:
                 groupList.append(data)
         return groupList
+
+    def getGroups(self):
+        return self.pcaGroups
 
     def findPcaData(self):
         self.pcaDataDict = {}
@@ -53,6 +57,10 @@ class pcaGraph():
                                                      'y': tempY,
                                                      'z': tempZ}
                     })
+                    #print(self.pcaGroups[numGroups] +":")
+                    #print("X: "+ str(tempX))
+                    #print("Y: " + str(tempY))
+
         else:
             self.pcaDataDict.update({
                 "ungrouped" :  {'x': self.xVals,

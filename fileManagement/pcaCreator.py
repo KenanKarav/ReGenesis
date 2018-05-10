@@ -10,6 +10,8 @@ class pcaCreator(MyFrame1):
         self._isPheno = False
         self._parent = parent
         self.dimension = 2
+        self.result = ""
+
     def ImportPcaFile( self, event ):
         #run the file validity checker
         self._pcaFilePath = self.pca_pcaImport.Path
@@ -179,11 +181,11 @@ class pcaCreator(MyFrame1):
             # store all pca data IDs in a list, loop through checking for the position of the ID in the phenotype file
             # plot each group seperately
 
-            tempID_1 = self.GetIDs( self._phenoFilePath, 0, self._numLines)
-            tempID_2 = self.GetIDs(self._phenoFilePath, 1, self._numLines)
+            tempID_1 = self.GetPhenoCol( self._phenoFilePath, 0, self._numLines)
+            tempID_2 = self.GetPhenoCol(self._phenoFilePath, 1, self._numLines)
             self._phenoIDs = []
 
-            for i in range(self._numLines-1):
+            for i in range(self._numLines):
                 self._phenoIDs.append(tempID_1[i] + ':' + tempID_2[i])
 
             # retrieving data from chosen phenotype column and storing in list
