@@ -133,6 +133,7 @@ class graphManager(wx.Frame):
     def plotPcaData(self, pcaData):
         pcaAppearance.groupNames = self.pca.getGroups()
         pcaAppearance.groupColours = self.pca.getColours()
+        pcaAppearance.groupShapes = self.pca.getShapes()
 
         if not hasattr(self, 'figure'):
             self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
@@ -153,8 +154,11 @@ class graphManager(wx.Frame):
 
             #getting the colours of the groups
             colourList = self.pca.getColours()
+            #getting the shapes of the groups
+            shapeList = self.pca.getShapes()
 
-            self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker='.')
+            #plotting the graph
+            self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker=shapeList[group])
 
         self.axes.legend()
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
@@ -247,8 +251,14 @@ class graphManager(wx.Frame):
         elif self.child.result == "CONFIRM":
             print("RE-PLOT GRAPH")
 
+            #re-plotting the graph with the newly chosen colours
             newColours = self.child.GetColours()
             self.pca.setColours(newColours)
+
+            #re-plotting the graph with the newly chosen shape
+            newShapes = self.child.GetShapes()
+            self.pca.setShapes(newShapes)
+
             pcaData = self.pca.findPcaData(False)
             self.plotPcaData(pcaData)
             #self.CreatePCAPlot(self.child._dataDict)

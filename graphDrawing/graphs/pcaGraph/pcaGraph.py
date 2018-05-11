@@ -6,6 +6,8 @@ class pcaGraph():
     def __init__(self, data):
         self.pcaFileData={}
         self.groupColours = {}
+        self.groupShapes = {}
+        self.pcaSelectedGroups = []
 
         self.dimension = data['dimension']
         self.pcaIDs = data['PcaIDs']
@@ -13,6 +15,7 @@ class pcaGraph():
         self.yVals = data['y']
         self.zVals = data['z']
 
+        #updating data dictionary used for saving and loading
         self.pcaFileData.update({
             'dimension' : self.dimension,
             'PcaIDs' : self.pcaIDs,
@@ -23,6 +26,7 @@ class pcaGraph():
 
         self.hasPheno = False
         if 'PhenoIDs' in data:
+            # setting phenotype-related data
             self.hasPheno = True
             self.phenoIDs = data['PhenoIDs']
             self.phenoCol = data['PhenoColumn']
@@ -40,13 +44,23 @@ class pcaGraph():
             for i in range(len(self.phenoCol)):
                 self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
 
-            #checking if colours have been defined
-            self.hasColours = False
-            if 'Colours' in data:
-                self.hasColours = True
-                self.groupColours = data['Colours']
-            else:
-                print('no defined colours')
+        #checking if colours have been defined
+        self.hasColours = False
+        if 'Colours' in data:
+            self.hasColours = True
+            self.groupColours = data['Colours']
+        else:
+            print('no defined colours')
+
+        #checking if shapes have been defined
+        self.hasShapes = False
+        if 'Shapes' in data:
+            self.hasShapes = True
+            self.groupShapes = data['Shapes']
+        else:
+            print('no defined shapes')
+
+
 
     # finds and stores each group from a list in a seperate list
     def genListGroups(self, column):
@@ -65,10 +79,19 @@ class pcaGraph():
     def getColours(self):
         return self.groupColours
 
+    def getShapes(self):
+        return self.groupShapes
+
     def setColours(self, colourDict):
         self.groupColours = colourDict
         self.pcaFileData.update({
             'Colours': self.groupColours
+        })
+
+    def setShapes(self, shapeDict):
+        self.groupShapes = shapeDict
+        self.pcaFileData.update({
+            'Shapes': self.groupShapes
         })
 
     #returns the pca data received from the pcaCreator class
@@ -103,31 +126,75 @@ class pcaGraph():
                     #adding to list of selected groups
                     self.pcaSelectedGroups.append(self.pcaGroups[numGroups])
 
-                    #assigning a random colour to each group
-                    if isNew and not self.hasColours:
-                        print("NEW AND HAS NO DEFINED COLOURS")
-                        #rand = np.random.rand(1, 3)
-                        #print(type(rand))
-                        rand = []
-                        rand.append(random.random())
-                        rand.append(random.random())
-                        rand.append(random.random())
-                        print(rand)
-                        print(type(rand))
-                        self.groupColours.update({
-                            self.pcaGroups[numGroups]: rand
-                        })
 
-                        self.pcaFileData.update({
-                            'Colours': self.groupColours
-                        })
+                    if isNew:
+                        # assigning a random colour to each group
+                        if not self.hasColours:
+                            print("NEW AND HAS NO DEFINED COLOURS")
+                            rand = []
+                            rand.append(random.random())
+                            rand.append(random.random())
+                            rand.append(random.random())
+                            self.groupColours.update({
+                                self.pcaGroups[numGroups]: rand
+                            })
 
+                            self.pcaFileData.update({
+                                'Colours': self.groupColours
+                            })
+
+                        #assigning a random shape to each group
+                        if not self.hasShapes:
+                            print("NEW AND HAS NO DEFINED SHAPES")
+                            # point, circle, square, triangle, diamond, cross, plus
+                            availableShapes = ['.', 'o', 's', '^', 'D', 'x', '+']
+                            rand = random.randint(0,6)
+                            self.groupShapes.update({
+                                self.pcaGroups[numGroups]: availableShapes[rand]
+                            })
+
+                            self.pcaFileData.update({
+                                'Shapes': self.groupShapes
+                            })
 
         else:
+            # NO PHENOTYPE FILE
             self.pcaDataDict.update({
                 "ungrouped" :  {'x': self.xVals,
                                 'y': self.yVals,
                                 'z': self.zVals}
             })
-        print(self.pcaFileData)
+            self.pcaSelectedGroups = ['ungrouped']
+
+            # assigning a random colour
+            if isNew:
+
+                if not self.hasColours:
+                    print("NEW AND HAS NO DEFINED COLOUR")
+                    rand = []
+                    rand.append(random.random())
+                    rand.append(random.random())
+                    rand.append(random.random())
+                    self.groupColours.update({
+                        'ungrouped': rand
+                    })
+
+                    self.pcaFileData.update({
+                        'Colours': self.groupColours
+                    })
+
+                if not self.hasShapes:
+                    print("NEW AND HAS NO DEFINED SHAPES")
+                    # point, circle, square, triangle, diamond, cross, plus
+                    availableShapes = ['.', 'o', 's', '^', 'D', 'x', '+']
+                    rand = random.randint(0, 6)
+                    self.groupShapes.update({
+                        'ungrouped' : availableShapes[rand]
+                    })
+
+                    self.pcaFileData.update({
+                        'Shapes': self.groupShapes
+                    })
+
+
         return self.pcaDataDict
