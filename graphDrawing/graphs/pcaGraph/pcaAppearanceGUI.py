@@ -15,7 +15,7 @@ import wx.xrc
 ## Class pcaGroupAppearance_Frame
 ###########################################################################
 
-class pcaGroupAppearance_Frame(wx.Frame):
+class pcaGroupAppearance_Frame(wx.Dialog):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Plot Group Appearance", pos=wx.DefaultPosition,
@@ -59,7 +59,7 @@ class pcaGroupAppearance_Frame(wx.Frame):
 
         childPcaGroupSizer_Shape = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.pcaGroupLabel_Shape = wx.StaticText(self, wx.ID_ANY, u"Change group shape:", wx.DefaultPosition,
+        self.pcaGroupLabel_Shape = wx.StaticText(self, wx.ID_ANY, u"Set group shape:", wx.DefaultPosition,
                                                  wx.DefaultSize, 0)
         self.pcaGroupLabel_Shape.Wrap(-1)
         self.pcaGroupLabel_Shape.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))

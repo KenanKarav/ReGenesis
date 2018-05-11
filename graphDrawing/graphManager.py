@@ -16,6 +16,9 @@ else:
     import wx.aui as aui
 
 import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
 
@@ -119,7 +122,7 @@ class graphManager(wx.Frame):
     def CreatePCAPlot(self, data):
 
         self.pca = pcaGraph(data)
-        pcaData = self.pca.findPcaData()
+        pcaData = self.pca.findPcaData(True)
         self.plotPcaData(pcaData)
 
     def CreateAdmixturePlot(self, data):
@@ -128,6 +131,9 @@ class graphManager(wx.Frame):
 
 
     def plotPcaData(self, pcaData):
+        pcaAppearance.groupNames = self.pca.getGroups()
+        pcaAppearance.groupColours = self.pca.getColours()
+
         if not hasattr(self, 'figure'):
             self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
             self.axes = self.figure.add_subplot(111)
@@ -137,15 +143,19 @@ class graphManager(wx.Frame):
         # Add it to the panel created in wxFormBuilder
 
 
-       # if self.pca.dimension == 2:
+        #if self.pca.dimension == 2:
         x = []
         y = []
+
         for group in pcaData:
             x = pcaData[group]['x']
             y = pcaData[group]['y']
-            #print(group +",")
 
-            self.axes.scatter(x, y, label=group, s=5)
+            #getting the colours of the groups
+            colourList = self.pca.getColours()
+
+            self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker='.')
+
         self.axes.legend()
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
         self.navToolbar = NavigationToolbar(self.canvas)
@@ -189,7 +199,8 @@ class graphManager(wx.Frame):
 
     def doSaveData(self, f):
         # find dictionary of values to plot
-        pcaData = self.pca.findPcaData()
+        pcaData = self.pca.getSaveFileData()
+        print(pcaData)
         json.dump(pcaData, f, ensure_ascii=False)
         f.close()
 
@@ -216,7 +227,7 @@ class graphManager(wx.Frame):
 
     def doLoadData(self,f):
         pcaData = json.load(f)
-        self.plotPcaData(pcaData)
+        self.CreatePCAPlot(pcaData)
         f.close()
 
     def exportGraphOnMenuSelection(self, event):
@@ -229,11 +240,17 @@ class graphManager(wx.Frame):
     def onAppearanceButtonClick(self, event):
         self.child = pcaAppearance(self)
         self.Disable()
-        self.child.Show()
+        self.child.ShowModal()
         if self.child.result == "CANCEL":
+            print("canceled")
             event.Skip()
         elif self.child.result == "CONFIRM":
             print("RE-PLOT GRAPH")
+
+            newColours = self.child.GetColours()
+            self.pca.setColours(newColours)
+            pcaData = self.pca.findPcaData(False)
+            self.plotPcaData(pcaData)
             #self.CreatePCAPlot(self.child._dataDict)
 
 if __name__ == "__main__":
