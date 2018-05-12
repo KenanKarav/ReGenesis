@@ -140,6 +140,10 @@ class graphManager(wx.Frame):
         self.panButton.Bind(wx.EVT_BUTTON, self.onPanButtonClick)
         self.forwardButton.Bind(wx.EVT_BUTTON, self.onForwardButtonClick)
         self.backButton.Bind(wx.EVT_BUTTON, self.onBackButtonClick)
+
+        # Variable to store which graph type is currently loaded for saving  purposes
+        self.graphType = None
+
     def __del__(self):
         pass
 
@@ -166,20 +170,20 @@ class graphManager(wx.Frame):
 
     def CreatePCAPlot(self, data):
 
-        self.pca = pcaGraph(data)
-        pcaData = self.pca.findPcaData(True)
+        self.graph = pcaGraph(data)
+        pcaData = self.graph.findPcaData(True)
         self.plotPcaData(pcaData)
 
     def CreateAdmixturePlot(self, data):
 
-        self.admix = admixGraph(data)
-        admixData = self.admix.genDataDictionary()
+        self.graph = admixGraph(data)
+        admixData = self.graph.genDataDictionary()
         self.plotAdmixData(admixData)
 
     def plotPcaData(self, pcaData):
-        pcaAppearance.groupNames = self.pca.getGroups()
-        pcaAppearance.groupColours = self.pca.getColours()
-        pcaAppearance.groupShapes = self.pca.getShapes()
+        pcaAppearance.groupNames = self.graph.getGroups()
+        pcaAppearance.groupColours = self.graph.getColours()
+        pcaAppearance.groupShapes = self.graph.getShapes()
 
         self.createFigure()
 
@@ -187,9 +191,9 @@ class graphManager(wx.Frame):
             x = pcaData[group]['x']
             y = pcaData[group]['y']
             # getting the colours of the groups
-            colourList = self.pca.getColours()
+            colourList = self.graph.getColours()
             # getting the shapes of the groups
-            shapeList = self.pca.getShapes()
+            shapeList = self.graph.getShapes()
 
             # plotting the graph
             self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker=shapeList[group])
@@ -297,8 +301,15 @@ class graphManager(wx.Frame):
 
     def doSaveData(self, f):
         # find dictionary of values to plot
-        pcaData = self.pca.getSaveFileData()
-        json.dump(pcaData, f, ensure_ascii=False)
+        if self.graph.getGraphType() == 'admix':
+            data = self.graph.getSaveFileData()
+            # Add a graph type key to the data dict
+            data.update({"GraphType" : 'admix'})
+        elif self.graph.getGraphType() == 'pca':
+            data = self.graph.getSaveFileData()
+            # Add a graph type key to the data dict
+            data.update({"GraphType" : "pca"})
+        json.dump(data, f, ensure_ascii=False)
         f.close()
 
     def loadGraphOnMenuSelection(self, event):
@@ -323,8 +334,15 @@ class graphManager(wx.Frame):
                 wx.LogError("Cannot open file '%s'." % file)
 
     def doLoadData(self,f):
-        pcaData = json.load(f)
-        self.CreatePCAPlot(pcaData)
+        data = json.load(f)
+        if data.get("GraphType") == 'admix':
+            # Delete the Graph Type key from the data dict
+            del data["GraphType"]
+            self.CreateAdmixturePlot(data)
+        elif data.get("GraphType") == 'pca':
+            # Delete the Graph Type key from the data dict
+            del data["GraphType"]
+            self.CreatePCAPlot(data)
         f.close()
 
     def exportGraphOnMenuSelection(self, event):

@@ -10,7 +10,7 @@ class TestPCAGraph(unittest.TestCase):
         self.myGraph = pcaGraph(testDict)
 
     def test_FindPCAData(self):
-        tempDict = self.myGraph.findPcaData()
+        tempDict = self.myGraph.findPcaData(False)
         self.assertEqual({'Green':{'x':[0.33, 0.58], 'y':[0.60,0.24], 'z':[0.07,0.18]} , 'Blue' : {'x':[0.48],'y':[0.22],'z':[0.30]}}, tempDict)
 
 if __name__ == '__main__':

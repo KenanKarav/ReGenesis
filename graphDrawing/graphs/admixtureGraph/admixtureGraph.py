@@ -11,12 +11,14 @@ class admixtureGraph():
             self.admixGroups = []
             self.phenoDict = {}
             self.admixDatadict = {}
+            self.graphType = 'admix'
 
 
         def __init__(self, data):
             self.admixIDs = data['AdmixIDs']
             self.ancestryDict = {}  # This will contain a Dict of lists
             self.numAncestries = 0
+            self.graphType = 'admix'
 
             # check for n number of ancestries through iteration
             checkAncestry = True
@@ -41,7 +43,8 @@ class admixtureGraph():
                 self.phenoDict = {}
                 for i in range(len(self.phenoCol)):
                     self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
-                self.admixDatadict = self.genDataDictionary()
+
+                self.admixFileData = data
 
         def genGroupList(self, column):
             groupList = []
@@ -101,7 +104,14 @@ class admixtureGraph():
         def getGroupList(self):
             return self.admixGroups
 
-        def getAdmixDataDict(self):
-            return self.getAdmixDataDict()
+        def getSaveFileData(self):
+            tempDict = self.admixFileData
+            del tempDict ["AdmixFile"]
+            if "PhenoFile" in tempDict:
+                del tempDict["PhenoFile"]
+            return tempDict
+
+        def getGraphType(self):
+            return self.graphType
 
 

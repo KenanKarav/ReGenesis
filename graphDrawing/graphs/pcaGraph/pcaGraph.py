@@ -5,6 +5,7 @@ class pcaGraph():
 
     def __init__(self, data):
         self.pcaFileData={}
+        self.graphType = 'pca'
         self.groupColours = {}
         self.groupShapes = {}
         self.pcaSelectedGroups = []
@@ -93,6 +94,9 @@ class pcaGraph():
         self.pcaFileData.update({
             'Shapes': self.groupShapes
         })
+
+    def getGraphType(self):
+        return self.graphType
 
     #returns the pca data received from the pcaCreator class
     def getSaveFileData(self):
@@ -198,3 +202,4 @@ class pcaGraph():
 
 
         return self.pcaDataDict
+
