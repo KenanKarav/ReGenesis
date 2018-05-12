@@ -7,8 +7,9 @@ class admixCreator(AdmixFrame):
 
     def __init__(self, parent):
         AdmixFrame.__init__(self, parent)
-        self.__isPheno = False;
+        self.__isPheno = False
         self._parent = parent
+        self.result = ""
 
     def OnFileChange_ImportDataFile(self, event):
         #Validate Imported File
@@ -217,5 +218,9 @@ class admixCreator(AdmixFrame):
             else:
                 groupList.append(data)
         return groupList
+
+    def OnClose(self,event):
+        self._parent.Enable()
+        self.Destroy()
 
 

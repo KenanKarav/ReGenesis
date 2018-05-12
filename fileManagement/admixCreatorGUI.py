@@ -21,6 +21,8 @@ class AdmixFrame(wx.Dialog):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Admix Creator", pos=wx.DefaultPosition,
                           size=wx.Size(573, 286), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
         bSizer2 = wx.BoxSizer(wx.VERTICAL)
@@ -143,6 +145,9 @@ class AdmixFrame(wx.Dialog):
         event.Skip()
 
     def OnBtnClick_Cancel(self, event):
+        event.Skip()
+
+    def OnClose(self, event):
         event.Skip()
 
 
