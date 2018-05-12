@@ -1,17 +1,23 @@
 from graphDrawing.graphs.pcaGraph.pcaAppearanceGUI import *
 from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
 import math
-class PcaAppearance(pcaGroupAppearance_Frame):
+class PcaAppearance(pcaAppearance_Frame):
 
     def __init__(self, parent):
-        pcaGroupAppearance_Frame.__init__(self, parent)
+        pcaAppearance_Frame.__init__(self, parent)
         self._parent = parent
         self.result = ""
 
         self.groupNames
         self.groupColours
         self.groupShapes
+        self.groupSizes
+        self.title
 
+        #load the title
+        self.pca_Title.Clear()
+        if not self.title=='':
+            self.pca_Title.SetValue(self.title)
 
         #load all the groups into choice box
         self.pca_GroupName.Clear()
@@ -20,7 +26,7 @@ class PcaAppearance(pcaGroupAppearance_Frame):
                 self.pca_GroupName.Append(self.groupNames[x])
             self.pca_GroupName.SetSelection(0)
 
-        #find the current colour of the group
+        #find the colour of the first group
         colour = self.groupColours[self.groupNames[0]]
 
         r = math.floor(colour[0]*255)
@@ -39,9 +45,13 @@ class PcaAppearance(pcaGroupAppearance_Frame):
         self.pca_GroupShape.Append("Cross")
         self.pca_GroupShape.Append("Plus")
 
-        #find the current shape of the group
+        #find the shape of the first group
         shape = self.groupShapes[self.groupNames[0]]
         self.UpdateShapeDisplay(shape)
+
+        #find the size of the first group
+        if (len(self.groupSizes) >0):
+            self.pca_GroupSize.SetValue(self.groupSizes[self.groupNames[0]])
 
     def GroupChange(self, event):
 
@@ -59,6 +69,10 @@ class PcaAppearance(pcaGroupAppearance_Frame):
         #set the shape of the new group
         shape = self.groupShapes[self.groupNames[groupNum]]
         self.UpdateShapeDisplay(shape)
+
+        #set the size of the new group
+        size = self.groupSizes[self.groupNames[groupNum]]
+        self.pca_GroupSize.SetValue(size)
 
     def UpdateShapeDisplay(self, shape):
         if shape == '.':
@@ -81,6 +95,12 @@ class PcaAppearance(pcaGroupAppearance_Frame):
 
     def GetShapes(self):
         return self.groupShapes
+
+    def GetTitle(self):
+        return self.title
+
+    def GetSize(self):
+        return self.groupSizes
 
     def OnClose(self,event):
         self._parent.Enable()
@@ -128,6 +148,15 @@ class PcaAppearance(pcaGroupAppearance_Frame):
             newShape = '+'
 
         self.groupShapes[self.groupNames[groupNum]] = newShape
+
+        #get the size that the group is being set to
+        newSize = self.pca_GroupSize.GetValue()
+        #set the new size of the group
+        self.groupSizes[self.groupNames[groupNum]] = newSize
+
+        #set the title of the graph
+        self.title = self.pca_Title.GetValue()
+
 
         self._parent.Enable()
         self._parent.Show()

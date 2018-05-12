@@ -12,21 +12,62 @@ import wx.xrc
 
 
 ###########################################################################
-## Class pcaGroupAppearance_Frame
+## Class pcaAppearance_Frame
 ###########################################################################
 
-class pcaGroupAppearance_Frame(wx.Dialog):
+class pcaAppearance_Frame(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Plot Group Appearance", pos=wx.DefaultPosition,
-                          size=wx.Size(327, 217), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Edit PCA Plot Appearance", pos=wx.DefaultPosition,
+                          size=wx.Size(325, 439), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
         self.SetBackgroundColour(wx.Colour(240, 240, 240))
 
-        parentPcaGroupSizer = wx.BoxSizer(wx.VERTICAL)
+        parentPcaSizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.pcaAppearLabel_GeneralAppearance = wx.StaticText(self, wx.ID_ANY, u"General Appearance:",
+                                                              wx.DefaultPosition, wx.DefaultSize, 0)
+        self.pcaAppearLabel_GeneralAppearance.Wrap(-1)
+        self.pcaAppearLabel_GeneralAppearance.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        parentPcaSizer.Add(self.pcaAppearLabel_GeneralAppearance, 0, wx.ALL, 5)
+
+        childPcaSizer_Title = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.pcaAppearLabel_Title = wx.StaticText(self, wx.ID_ANY, u"Title:", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.pcaAppearLabel_Title.Wrap(-1)
+        self.pcaAppearLabel_Title.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        childPcaSizer_Title.Add(self.pcaAppearLabel_Title, 0, wx.ALL, 5)
+
+        self.pca_Title = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(250, -1), 0)
+        childPcaSizer_Title.Add(self.pca_Title, 0, wx.ALL, 5)
+
+        parentPcaSizer.Add(childPcaSizer_Title, 1, wx.EXPAND, 5)
+
+        self.pcaCheckBox_ShowGrid = wx.CheckBox(self, wx.ID_ANY, u"Show Grid", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.pcaCheckBox_ShowGrid.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        parentPcaSizer.Add(self.pcaCheckBox_ShowGrid, 0, wx.ALL, 5)
+
+        self.pcaCheckBox_showAxesLabels = wx.CheckBox(self, wx.ID_ANY, u"Show Axes Labels", wx.DefaultPosition,
+                                                      wx.DefaultSize, 0)
+        self.pcaCheckBox_showAxesLabels.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        parentPcaSizer.Add(self.pcaCheckBox_showAxesLabels, 0, wx.ALL, 5)
+
+        parentPcaSizer.Add((0, 5), 1, wx.EXPAND, 5)
+
+        self.pcaAppearLabel_Group = wx.StaticText(self, wx.ID_ANY, u"Group Appearance:", wx.DefaultPosition,
+                                                  wx.DefaultSize, 0)
+        self.pcaAppearLabel_Group.Wrap(-1)
+        self.pcaAppearLabel_Group.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        parentPcaSizer.Add(self.pcaAppearLabel_Group, 0, wx.ALL, 5)
 
         childPcaGroupSizer_Name = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -41,7 +82,7 @@ class pcaGroupAppearance_Frame(wx.Dialog):
         self.pca_GroupName.SetSelection(0)
         childPcaGroupSizer_Name.Add(self.pca_GroupName, 0, wx.ALL, 5)
 
-        parentPcaGroupSizer.Add(childPcaGroupSizer_Name, 1, wx.EXPAND, 5)
+        parentPcaSizer.Add(childPcaGroupSizer_Name, 1, wx.EXPAND, 5)
 
         childPcaGroupSizer_Colour = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -56,7 +97,7 @@ class pcaGroupAppearance_Frame(wx.Dialog):
                                                    wx.CLRP_DEFAULT_STYLE)
         childPcaGroupSizer_Colour.Add(self.pca_GroupColour, 0, wx.ALL, 5)
 
-        parentPcaGroupSizer.Add(childPcaGroupSizer_Colour, 1, wx.EXPAND, 5)
+        parentPcaSizer.Add(childPcaGroupSizer_Colour, 1, wx.EXPAND, 5)
 
         childPcaGroupSizer_Shape = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -72,7 +113,26 @@ class pcaGroupAppearance_Frame(wx.Dialog):
         self.pca_GroupShape.SetSelection(0)
         childPcaGroupSizer_Shape.Add(self.pca_GroupShape, 0, wx.ALL, 5)
 
-        parentPcaGroupSizer.Add(childPcaGroupSizer_Shape, 1, wx.EXPAND, 5)
+        parentPcaSizer.Add(childPcaGroupSizer_Shape, 1, wx.EXPAND, 5)
+
+        bSizer7 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.pcaGroupLabel_Size = wx.StaticText(self, wx.ID_ANY, u"Set group size:", wx.DefaultPosition, wx.DefaultSize,
+                                                0)
+        self.pcaGroupLabel_Size.Wrap(-1)
+        self.pcaGroupLabel_Size.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        bSizer7.Add(self.pcaGroupLabel_Size, 0, wx.ALL, 5)
+
+        self.pca_GroupSize = wx.SpinCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize,
+                                         wx.SP_ARROW_KEYS, 2, 36, 14)
+        self.pca_GroupSize.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+
+        bSizer7.Add(self.pca_GroupSize, 0, wx.ALL, 5)
+
+        parentPcaSizer.Add(bSizer7, 1, wx.EXPAND, 5)
+
+        parentPcaSizer.Add((0, 0), 1, wx.EXPAND, 5)
 
         childPcaGroupSizer_Buttons = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -82,9 +142,9 @@ class pcaGroupAppearance_Frame(wx.Dialog):
         self.pca_GroupCancel = wx.Button(self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0)
         childPcaGroupSizer_Buttons.Add(self.pca_GroupCancel, 0, wx.ALL, 5)
 
-        parentPcaGroupSizer.Add(childPcaGroupSizer_Buttons, 1, wx.ALIGN_RIGHT, 5)
+        parentPcaSizer.Add(childPcaGroupSizer_Buttons, 1, wx.ALIGN_RIGHT, 5)
 
-        self.SetSizer(parentPcaGroupSizer)
+        self.SetSizer(parentPcaSizer)
         self.Layout()
 
         self.Centre(wx.BOTH)
@@ -107,7 +167,5 @@ class pcaGroupAppearance_Frame(wx.Dialog):
     def CancelChanges(self, event):
         event.Skip()
 
-    def OnClose(self,event):
+    def OnClose(self, event):
         event.Skip()
-
-

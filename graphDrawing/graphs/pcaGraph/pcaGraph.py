@@ -9,6 +9,8 @@ class pcaGraph():
         self.groupColours = {}
         self.groupShapes = {}
         self.pcaSelectedGroups = []
+        self.title=""
+        self.groupSizes = {}
 
         self.dimension = data['dimension']
         self.pcaIDs = data['PcaIDs']
@@ -32,16 +34,18 @@ class pcaGraph():
             self.phenoIDs = data['PhenoIDs']
             self.phenoCol = data['PhenoColumn']
 
+            # updating data dictionary used for saving and loading
             self.pcaFileData.update({
                 'PhenoIDs': self.phenoIDs,
                 'PhenoColumn': self.phenoCol
             })
 
+            #retrieving a list of all existing groups in the phenotype file
             self.pcaGroups = self.genListGroups(self.phenoCol)
             self.pcaSelectedGroups = []
-            print("MADE GROUPS")
             self.phenoDict = {}
 
+            #generate dictionary of pheno IDs and the corresponding selected column data
             for i in range(len(self.phenoCol)):
                 self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
 
@@ -60,6 +64,22 @@ class pcaGraph():
             self.groupShapes = data['Shapes']
         else:
             print('no defined shapes')
+
+        #checking if the group size has been defined
+        self.hasSize = False
+        if 'Sizes' in data:
+            self.hasSize = True
+            self.groupSizes = data['Sizes']
+        else:
+            print("no defined size")
+
+        #checking if title has been defined
+        self.hasTitle = False
+        if 'Title' in data:
+            self.hasTitle = True
+            self.title = data['Title']
+        else:
+            print('no defined title')
 
 
 
@@ -83,6 +103,12 @@ class pcaGraph():
     def getShapes(self):
         return self.groupShapes
 
+    def getSize(self):
+        return self.groupSizes
+
+    def getTitle(self):
+        return self.title
+
     def setColours(self, colourDict):
         self.groupColours = colourDict
         self.pcaFileData.update({
@@ -93,6 +119,18 @@ class pcaGraph():
         self.groupShapes = shapeDict
         self.pcaFileData.update({
             'Shapes': self.groupShapes
+        })
+
+    def setSize(self, sizeDict):
+        self.groupSizes = sizeDict
+        self.pcaFileData.update({
+            'Sizes': self.groupSizes
+        })
+
+    def setTitle(self, title):
+        self.title = title
+        self.pcaFileData.update({
+            'Title': self.title
         })
 
     def getGraphType(self):
@@ -161,6 +199,18 @@ class pcaGraph():
                                 'Shapes': self.groupShapes
                             })
 
+                        #assigning a size of 3 to each group
+                        if not self.hasSize:
+                            print("NEW AND HAS NO DEFINED SIZE")
+                            self.groupSizes.update({
+                                self.pcaGroups[numGroups]: 3
+                            })
+
+                            self.pcaFileData.update({
+                                'Sizes': self.groupSizes
+                            })
+
+
         else:
             # NO PHENOTYPE FILE
             self.pcaDataDict.update({
@@ -170,9 +220,10 @@ class pcaGraph():
             })
             self.pcaSelectedGroups = ['ungrouped']
 
-            # assigning a random colour
+
             if isNew:
 
+                # assigning a random colour
                 if not self.hasColours:
                     print("NEW AND HAS NO DEFINED COLOUR")
                     rand = []
@@ -186,7 +237,7 @@ class pcaGraph():
                     self.pcaFileData.update({
                         'Colours': self.groupColours
                     })
-
+                #assigning a random shape
                 if not self.hasShapes:
                     print("NEW AND HAS NO DEFINED SHAPES")
                     # point, circle, square, triangle, diamond, cross, plus
@@ -200,6 +251,21 @@ class pcaGraph():
                         'Shapes': self.groupShapes
                     })
 
+                #assigning a size of 3
+                if not self.hasSize:
+                    print("NEW AND HAS NO DEFINED SIZE")
+                    self.groupSizes.update({
+                        'ungrouped': 3
+                    })
+
+                    self.pcaFileData.update({
+                        'Sizes': self.groupSizes
+                    })
+
+        # setting the title
+        if isNew and not self.hasTitle:
+            print("NEW AND HAS NO DEFINED TITLE")
+            self.title = "PCA Plot"
 
         return self.pcaDataDict
 

@@ -184,6 +184,8 @@ class graphManager(wx.Frame):
         pcaAppearance.groupNames = self.graph.getGroups()
         pcaAppearance.groupColours = self.graph.getColours()
         pcaAppearance.groupShapes = self.graph.getShapes()
+        pcaAppearance.groupSizes = self.graph.getSize()
+        pcaAppearance.title = self.graph.getTitle()
 
         self.createFigure()
 
@@ -194,10 +196,14 @@ class graphManager(wx.Frame):
             colourList = self.graph.getColours()
             # getting the shapes of the groups
             shapeList = self.graph.getShapes()
+            #getting the sizes of the groups
+            sizeList = self.graph.getSize()
+            #getting the title of the graph
+            title = self.graph.getTitle()
 
             # plotting the graph
-            self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker=shapeList[group])
-
+            self.axes.scatter(x, y, label=group, s=sizeList[group], color=colourList[group], marker=shapeList[group])
+        self.axes.set_title(title)
         self.showGraph()
 
         return
@@ -371,6 +377,14 @@ class graphManager(wx.Frame):
                 #re-plotting the graph with the newly chosen shape
                 newShapes = self.child.GetShapes()
                 self.graph.setShapes(newShapes)
+
+                #re-plotting the graph with the new group size
+                newSize = self.child.GetSize()
+                self.graph.setSize(newSize)
+
+                #re-plotting graph with new title
+                newTitle = self.child.GetTitle()
+                self.graph.setTitle(newTitle)
 
                 pcaData = self.graph.findPcaData(False)
                 self.plotPcaData(pcaData)
