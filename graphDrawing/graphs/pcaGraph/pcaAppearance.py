@@ -13,11 +13,18 @@ class PcaAppearance(pcaAppearance_Frame):
         self.groupShapes
         self.groupSizes
         self.title
+        self.hasGrid
+        self.hasLabels
 
         #load the title
         self.pca_Title.Clear()
         if not self.title=='':
             self.pca_Title.SetValue(self.title)
+
+        #Grid
+        self.pcaCheckBox_ShowGrid.SetValue(self.hasGrid)
+        #Labels
+        self.pcaCheckBox_showAxesLabels.SetValue(self.hasLabels)
 
         #load all the groups into choice box
         self.pca_GroupName.Clear()
@@ -99,6 +106,12 @@ class PcaAppearance(pcaAppearance_Frame):
     def GetTitle(self):
         return self.title
 
+    def GetHasGrid(self):
+        return self.hasGrid
+
+    def GetHasLabels(self):
+        return self.hasLabels
+
     def GetSize(self):
         return self.groupSizes
 
@@ -156,6 +169,12 @@ class PcaAppearance(pcaAppearance_Frame):
 
         #set the title of the graph
         self.title = self.pca_Title.GetValue()
+
+        #enable or disable grid
+        self.hasGrid = self.pcaCheckBox_ShowGrid.GetValue()
+
+        #enable or disable labels
+        self.hasLabels = self.pcaCheckBox_showAxesLabels.GetValue()
 
 
         self._parent.Enable()

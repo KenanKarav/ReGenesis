@@ -158,9 +158,15 @@ class pcaCreator(pca_Frame):
         self._pcaIDs = self.GetIDs(self._pcaFilePath, 0, self._numLines)
 
         self._pcaFile = File(self._pcaData['fileName'], self._pcaData['fileType'], self._pcaData['data'])
+        print("PCA "+str(self._num1))
+        print("PCA "+str(self._num2))
         self._dataDict = {
             'PcaFile' : self._pcaFile,
             'PcaIDs' : self._pcaIDs,
+            'xLabel': "PCA "+str(self._num1),
+            'yLabel': "PCA "+str(self._num2),
+            'hasGrid': 1,
+            'hasLabels': 1,
             'x' : self._xVals,
             'y' : self._yVals,
             'z' : self._zVals,

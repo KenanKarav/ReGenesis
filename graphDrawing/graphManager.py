@@ -186,6 +186,8 @@ class graphManager(wx.Frame):
         pcaAppearance.groupShapes = self.graph.getShapes()
         pcaAppearance.groupSizes = self.graph.getSize()
         pcaAppearance.title = self.graph.getTitle()
+        pcaAppearance.hasGrid = self.graph.getHasGrid()
+        pcaAppearance.hasLabels = self.graph.getHasLabels()
 
         self.createFigure()
 
@@ -201,9 +203,20 @@ class graphManager(wx.Frame):
             #getting the title of the graph
             title = self.graph.getTitle()
 
+            hasGrid = self.graph.getHasGrid()
+            hasLabels = self.graph.getHasLabels()
+
             # plotting the graph
+            print("hi Before")
             self.axes.scatter(x, y, label=group, s=sizeList[group], color=colourList[group], marker=shapeList[group])
+            print("hi")
         self.axes.set_title(title)
+        if(hasGrid):
+            self.axes.grid()
+
+        if(hasLabels):
+            self.axes.set_xlabel(self.graph.getXLabel())
+            self.axes.set_ylabel(self.graph.getYLabel())
         self.showGraph()
 
         return
@@ -385,6 +398,14 @@ class graphManager(wx.Frame):
                 #re-plotting graph with new title
                 newTitle = self.child.GetTitle()
                 self.graph.setTitle(newTitle)
+
+                #re-plotting graph with grid settings
+                grid = self.child.GetHasGrid()
+                self.graph.setHasGrid(grid)
+
+                #re-plotting graph with labels settings
+                labels = self.child.GetHasLabels()
+                self.graph.setHasLabels(labels)
 
                 pcaData = self.graph.findPcaData(False)
                 self.plotPcaData(pcaData)

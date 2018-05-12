@@ -14,6 +14,10 @@ class pcaGraph():
 
         self.dimension = data['dimension']
         self.pcaIDs = data['PcaIDs']
+        self.xLabel = data['xLabel']
+        self.yLabel = data['yLabel']
+        self.hasGrid = data['hasGrid']
+        self.hasLabels = data['hasLabels']
         self.xVals = data['x']
         self.yVals = data['y']
         self.zVals = data['z']
@@ -22,6 +26,10 @@ class pcaGraph():
         self.pcaFileData.update({
             'dimension' : self.dimension,
             'PcaIDs' : self.pcaIDs,
+            'xLabel' : self.xLabel,
+            'yLabel' : self.yLabel,
+            'hasGrid' : self.hasGrid,
+            'hasLabels' : self.hasLabels,
             'x' : self.xVals,
             'y' : self.yVals,
             'z' : self.zVals
@@ -82,7 +90,6 @@ class pcaGraph():
             print('no defined title')
 
 
-
     # finds and stores each group from a list in a seperate list
     def genListGroups(self, column):
         groupList = []
@@ -109,6 +116,18 @@ class pcaGraph():
     def getTitle(self):
         return self.title
 
+    def getHasGrid(self):
+        return self.hasGrid
+
+    def getHasLabels(self):
+        return self.hasLabels
+
+    def getXLabel(self):
+        return self.xLabel
+
+    def getYLabel(self):
+        return self.yLabel
+
     def setColours(self, colourDict):
         self.groupColours = colourDict
         self.pcaFileData.update({
@@ -131,6 +150,18 @@ class pcaGraph():
         self.title = title
         self.pcaFileData.update({
             'Title': self.title
+        })
+
+    def setHasGrid(self, hasGrid):
+        self.hasGrid = hasGrid
+        self.pcaFileData.update({
+            'hasGrid': self.hasGrid
+        })
+
+    def setHasLabels(self, hasLabels):
+        self.hasLabels = hasLabels
+        self.pcaFileData.update({
+            'hasLabels': self.hasLabels
         })
 
     def getGraphType(self):
