@@ -20,6 +20,7 @@ class pcaGroupAppearance_Frame(wx.Dialog):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Plot Group Appearance", pos=wx.DefaultPosition,
                           size=wx.Size(327, 217), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOW))
@@ -104,6 +105,9 @@ class pcaGroupAppearance_Frame(wx.Dialog):
         event.Skip()
 
     def CancelChanges(self, event):
+        event.Skip()
+
+    def OnClose(self,event):
         event.Skip()
 
 

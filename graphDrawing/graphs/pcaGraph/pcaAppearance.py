@@ -82,6 +82,10 @@ class PcaAppearance(pcaGroupAppearance_Frame):
     def GetShapes(self):
         return self.groupShapes
 
+    def OnClose(self,event):
+        self._parent.Enable()
+        self.Destroy()
+
     def CancelChanges(self, event):
         self.result="CANCEL"
         self._parent.Enable()

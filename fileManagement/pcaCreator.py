@@ -132,6 +132,8 @@ class pcaCreator(MyFrame1):
         self.pca_phenoChoice.Disable()
 
         self.pca_label3.Disable()
+        self.pca_phenoImport.Disable()
+
         self.pca_label4.Disable()
         self.pca_Confirm.Disable()
 
@@ -259,5 +261,9 @@ class pcaCreator(MyFrame1):
             else:
                 groupList.append(data)
         return groupList
+
+    def OnClose(self,event):
+        self._parent.Enable()
+        self.Destroy()
 
 

@@ -357,6 +357,7 @@ class graphManager(wx.Frame):
         self.Disable()
         self.child.ShowModal()
         if self.child.result == "CANCEL":
+            print('lol')
             event.Skip()
         elif self.child.result == "CONFIRM":
             print("RE-PLOT GRAPH")

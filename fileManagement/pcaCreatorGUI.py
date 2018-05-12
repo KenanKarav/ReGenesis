@@ -18,8 +18,10 @@ import wx.xrc
 class MyFrame1(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Creator", pos=wx.DefaultPosition,
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Creator", pos=wx.DefaultPosition,
                           size=wx.Size(500, 300), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
@@ -116,16 +118,16 @@ class MyFrame1(wx.Dialog):
 
         bSizer6 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.pca_Cancel = wx.Button(self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer6.Add(self.pca_Cancel, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
-
-        self.pca_Reset = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer6.Add(self.pca_Reset, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
-
         self.pca_Confirm = wx.Button(self, wx.ID_ANY, u"Confirm", wx.DefaultPosition, wx.DefaultSize, 0)
         self.pca_Confirm.Enable(False)
 
         bSizer6.Add(self.pca_Confirm, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
+
+        self.pca_Reset = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer6.Add(self.pca_Reset, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
+
+        self.pca_Cancel = wx.Button(self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0)
+        bSizer6.Add(self.pca_Cancel, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
 
         bSizer1.Add(bSizer6, 1, wx.ALIGN_RIGHT, 5)
 
@@ -140,9 +142,9 @@ class MyFrame1(wx.Dialog):
         self.pca_col2.Bind(wx.EVT_CHOICE, self.PcaChoiceChange)
         self.pca_col3.Bind(wx.EVT_CHOICE, self.PcaChoiceChange)
         self.pca_phenoImport.Bind(wx.EVT_FILEPICKER_CHANGED, self.ImportPhenoFile)
-        self.pca_Cancel.Bind(wx.EVT_BUTTON, self.Cancel)
-        self.pca_Reset.Bind(wx.EVT_BUTTON, self.Reset)
         self.pca_Confirm.Bind(wx.EVT_BUTTON, self.Confirm)
+        self.pca_Reset.Bind(wx.EVT_BUTTON, self.Reset)
+        self.pca_Cancel.Bind(wx.EVT_BUTTON, self.Cancel)
 
     def __del__(self):
         pass
@@ -157,11 +159,14 @@ class MyFrame1(wx.Dialog):
     def ImportPhenoFile(self, event):
         event.Skip()
 
-    def Cancel(self, event):
+    def Confirm(self, event):
         event.Skip()
 
     def Reset(self, event):
         event.Skip()
 
-    def Confirm(self, event):
+    def Cancel(self, event):
+        event.Skip()
+
+    def OnClose(self,event):
         event.Skip()
