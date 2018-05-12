@@ -133,9 +133,13 @@ class graphManager(wx.Frame):
 
         self.saveButton.Bind(wx.EVT_BUTTON, self.saveGraphOnMenuSelection)
         self.loadButton.Bind(wx.EVT_BUTTON, self.loadGraphOnMenuSelection)
+        self.exportButton.Bind(wx.EVT_BUTTON, self.onExportButtonClick)
         self.zoomButton.Bind(wx.EVT_BUTTON, self.onZoomButtonClick)
         self.appearanceButton.Bind(wx.EVT_BUTTON, self.onAppearanceButtonClick)
-
+        self.homeButton.Bind(wx.EVT_BUTTON, self.onHomeButtonClick)
+        self.panButton.Bind(wx.EVT_BUTTON, self.onPanButtonClick)
+        self.forwardButton.Bind(wx.EVT_BUTTON, self.onForwardButtonClick)
+        self.backButton.Bind(wx.EVT_BUTTON, self.onBackButtonClick)
     def __del__(self):
         pass
 
@@ -163,26 +167,19 @@ class graphManager(wx.Frame):
     def CreatePCAPlot(self, data):
 
         self.pca = pcaGraph(data)
-        pcaData = self.pca.findPcaData()
+        pcaData = self.pca.findPcaData(True)
         self.plotPcaData(pcaData)
 
     def CreateAdmixturePlot(self, data):
 
         self.admix = admixGraph(data)
-
+        admixData = self.admix.genDataDictionary()
+        self.plotAdmixData(admixData)
 
     def plotPcaData(self, pcaData):
         pcaAppearance.groupNames = self.pca.getGroups()
         pcaAppearance.groupColours = self.pca.getColours()
         pcaAppearance.groupShapes = self.pca.getShapes()
-
-        if not hasattr(self, 'figure'):
-            self.figure = mpl.figure.Figure()  # figsize=(6, 4), dpi=100)
-            self.axes = self.figure.add_subplot(111)
-        else:
-            self.figure.clf()
-            self.axes = self.figure.add_subplot(111)
-        # Add it to the panel created in wxFormBuilder
 
         self.createFigure()
 
@@ -244,6 +241,7 @@ class graphManager(wx.Frame):
                     fullRatios[i].extend(ratios[i])
             else:
                 fullRatios = ratios
+
 
         # plotting bars
         indexes = [i for i in range(individualCount)]
@@ -330,7 +328,7 @@ class graphManager(wx.Frame):
         f.close()
 
     def exportGraphOnMenuSelection(self, event):
-        print("export graph event")
+        self.navToolbar.save_figure()
 
     def onZoomButtonClick(self, event):
 
