@@ -10,10 +10,7 @@ from graphDrawing.graphs.pcaGraph.pcaGraph import pcaGraph as pcaGraph
 from graphDrawing.graphs.admixtureGraph.admixtureGraph import admixtureGraph as admixGraph
 
 from graphDrawing.graphs.pcaGraph.pcaAppearance import PcaAppearance as pcaAppearance
-if 'phoenix' in wx.PlatformInfo:
-    import wx.lib.agw.aui as aui
-else:
-    import wx.aui as aui
+
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -23,13 +20,18 @@ from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
 
 
-
-
+MAXWIDTH = 925
+BUTTONHEIGHT = 40
+MAXHEIGHT = 650
+FIGUREWIDTH = 9
+FIGUREHEIGHT = 5.5
+FIGUREDPI = 100
 class graphManager(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"ReGenesis", pos=wx.DefaultPosition,
-                          size=wx.Size(650, 1000), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
-
+                          size=wx.Size(MAXWIDTH, MAXHEIGHT),
+                          style=wx.DEFAULT_FRAME_STYLE & ~ (wx.RESIZE_BORDER |
+                                                            wx.MAXIMIZE_BOX))
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -40,20 +42,38 @@ class graphManager(wx.Frame):
 
         # toolbar
         self.toolbar = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.toolbar.SetMinSize(wx.Size(1200, 40))
+        self.toolbar.SetMaxSize(wx.Size(1200,40))
         self.toolbarSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # adding buttons
-        self.saveButton = wx.Button(self.toolbar, wx.ID_ANY, u"Save Graph", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.toolbarSizer.Add(self.saveButton, 0, wx.ALL, 5)
+        self.homeButton = wx.Button(self.toolbar, wx.ID_ANY, u"Home", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.homeButton, 0, wx.ALL, 5)
 
-        self.loadButton = wx.Button(self.toolbar, wx.ID_ANY, u"Load Graph", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.toolbarSizer.Add(self.loadButton, 0, wx.ALL, 5)
+        self.backButton = wx.Button(self.toolbar, wx.ID_ANY, u"Undo", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.backButton, 0, wx.ALL, 5)
+
+        self.forwardButton = wx.Button(self.toolbar, wx.ID_ANY, u"Redo", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.forwardButton, 0, wx.ALL, 5)
+
+        self.panButton = wx.Button(self.toolbar, wx.ID_ANY, u"Pan", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.panButton, 0, wx.ALL, 5)
 
         self.zoomButton = wx.Button(self.toolbar, wx.ID_ANY, u"Zoom", wx.DefaultPosition, wx.DefaultSize, 0)
         self.toolbarSizer.Add(self.zoomButton, 0, wx.ALL, 5)
 
-        self.appearanceButton = wx.Button(self.toolbar, wx.ID_ANY, u"Edit Graph Appearance", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.appearanceButton = wx.Button(self.toolbar, wx.ID_ANY, u"Edit Appearance", wx.DefaultPosition, wx.DefaultSize, 0)
         self.toolbarSizer.Add(self.appearanceButton, 0, wx.ALL, 5)
+
+        self.saveButton = wx.Button(self.toolbar, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.saveButton, 0, wx.ALL, 5)
+
+        self.loadButton = wx.Button(self.toolbar, wx.ID_ANY, u"Load", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.loadButton, 0, wx.ALL, 5)
+
+        self.exportButton = wx.Button(self.toolbar, wx.ID_ANY, u"Export", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.toolbarSizer.Add(self.exportButton, 0, wx.ALL, 5)
+
 
 
         self.toolbar.SetSizer(self.toolbarSizer)
@@ -119,10 +139,31 @@ class graphManager(wx.Frame):
     def __del__(self):
         pass
 
+    def createFigure(self):
+        # checking if figure exists to avoid reinitializing
+        if not hasattr(self, 'figure'):
+            self.figure = mpl.figure.Figure(figsize=(FIGUREWIDTH, FIGUREHEIGHT), dpi=FIGUREDPI)
+
+        else:
+            self.figure.clf()
+
+        # add subplot to newly created/cleared figure
+
+        self.axes = self.figure.add_subplot(111)
+
+    def showGraph(self):
+
+        self.axes.legend()
+        self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
+
+        if not hasattr(self, "navToolbar"):
+            self.navToolbar = NavigationToolbar(self.canvas)
+            self.navToolbar.Hide()
+
     def CreatePCAPlot(self, data):
 
         self.pca = pcaGraph(data)
-        pcaData = self.pca.findPcaData(True)
+        pcaData = self.pca.findPcaData()
         self.plotPcaData(pcaData)
 
     def CreateAdmixturePlot(self, data):
@@ -143,30 +184,85 @@ class graphManager(wx.Frame):
             self.axes = self.figure.add_subplot(111)
         # Add it to the panel created in wxFormBuilder
 
-
-        #if self.pca.dimension == 2:
-        x = []
-        y = []
+        self.createFigure()
 
         for group in pcaData:
             x = pcaData[group]['x']
             y = pcaData[group]['y']
-
-            #getting the colours of the groups
+            # getting the colours of the groups
             colourList = self.pca.getColours()
-            #getting the shapes of the groups
+            # getting the shapes of the groups
             shapeList = self.pca.getShapes()
 
-            #plotting the graph
+            # plotting the graph
             self.axes.scatter(x, y, label=group, s=10, color=colourList[group], marker=shapeList[group])
 
-        self.axes.legend()
-        self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
-        self.navToolbar = NavigationToolbar(self.canvas)
-        self.navToolbar.Hide()
+        self.showGraph()
+
         return
 
-    # Virtual event handlers, overide them in your derived class
+
+    def plotAdmixData(self, admixData):
+
+
+        groups = list(admixData.keys())
+        ancestryLabels = list(admixData[groups[0]].keys())
+        individualCount = 0
+        groupCenters = []
+
+        # creating figure
+        self.createFigure()
+
+        fullRatios = []
+
+        self.axes.set_xticklabels([])
+        for group in admixData:
+
+            ratios = []
+
+            for ancestry in admixData[group]:
+                anc = admixData[group][ancestry]
+                ratios.append(anc)
+            numAncestries = len(ratios)
+            numIndividuals = len(ratios[0])
+
+            # Normalising ratios so they add up to 1
+            tempRatios = list(zip(*ratios))
+            sums = list(map(sum, tempRatios))
+            for ancestry in ratios:
+                for i in range(len(ancestry)):
+                    ancestry[i] /= sums[i]
+
+            # storing values used for separating groups at presentation
+
+            groupCenters.append(individualCount + (numIndividuals/2))
+            individualCount += numIndividuals
+            self.axes.axvline(individualCount, color='w')
+
+            if len(fullRatios) > 0:
+                for i in range(len(fullRatios)):
+                    fullRatios[i].extend(ratios[i])
+            else:
+                fullRatios = ratios
+
+        # plotting bars
+        indexes = [i for i in range(individualCount)]
+        self.axes.bar(indexes, fullRatios[0], 1, label=ancestryLabels[0])
+        # barBottom keeps track of the current height of each bar so subsequent bars can be plotted above
+        barBottom = [0 for i in range(individualCount)]
+        for i in range(0, numAncestries - 1):
+
+            # increasing height of barBottom
+            barBottom = [x + y for x, y in zip(barBottom, fullRatios[i])]
+            self.axes.bar(indexes, fullRatios[i + 1], 1, bottom=barBottom, label=ancestryLabels[i + 1])
+
+        # setting labels for better readability
+        self.axes.set_xticks(groupCenters)
+        self.axes.set_xticklabels(groups)
+
+        self.showGraph()
+
+    # Event Handlers
     def newPCAOnMenuSelection(self, event):
         self.child = pcaCreator(self)
         self.Disable()
@@ -204,7 +300,6 @@ class graphManager(wx.Frame):
     def doSaveData(self, f):
         # find dictionary of values to plot
         pcaData = self.pca.getSaveFileData()
-        print(pcaData)
         json.dump(pcaData, f, ensure_ascii=False)
         f.close()
 
@@ -246,7 +341,6 @@ class graphManager(wx.Frame):
         self.Disable()
         self.child.ShowModal()
         if self.child.result == "CANCEL":
-            print("canceled")
             event.Skip()
         elif self.child.result == "CONFIRM":
             print("RE-PLOT GRAPH")
@@ -263,9 +357,25 @@ class graphManager(wx.Frame):
             self.plotPcaData(pcaData)
             #self.CreatePCAPlot(self.child._dataDict)
 
+    def onHomeButtonClick(self, event):
+        self.navToolbar.home()
+
+    def onPanButtonClick(self, event):
+        self.navToolbar.pan()
+
+    def onConfigureButtonClick(self, event):
+        self.navToolbar.configure_subplots()
+
+    def onBackButtonClick(self, event):
+        self.navToolbar.back()
+
+    def onForwardButtonClick(self, event):
+        self.navToolbar.forward()
+
+    def onExportButtonClick(self, event):
+        self.navToolbar.save_figure()
 if __name__ == "__main__":
     app = wx.App(False)
     frame = graphManager(None)
-    #frame.CreatePlot()
     frame.Show()
     app.MainLoop()
