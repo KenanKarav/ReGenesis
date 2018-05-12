@@ -3,10 +3,10 @@ from fileManagement.pcaCreatorGUI import *
 from fileManagement.fileImporter import fileImporter
 from fileManagement.file import *
 
-class pcaCreator(MyFrame1):
+class pcaCreator(pca_Frame):
 
     def __init__(self, parent):
-        MyFrame1.__init__(self, parent)
+        pca_Frame.__init__(self, parent)
         self._isPheno = False
         self._parent = parent
         self.dimension = 2
