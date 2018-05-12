@@ -12,10 +12,10 @@ import wx.xrc
 
 
 ###########################################################################
-## Class MyFrame1
+## Class pca_Frame
 ###########################################################################
 
-class MyFrame1(wx.Dialog):
+class pca_Frame(wx.Dialog):
 
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"PCA Creator", pos=wx.DefaultPosition,
@@ -27,24 +27,24 @@ class MyFrame1(wx.Dialog):
         self.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
         self.SetBackgroundColour(wx.Colour(239, 239, 239))
 
-        bSizer1 = wx.BoxSizer(wx.VERTICAL)
+        pca_ParentSizer = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        pcaBoxSizer_PcaImport = wx.BoxSizer(wx.HORIZONTAL)
 
         self.pca_label1 = wx.StaticText(self, wx.ID_ANY, u"Import PCA file", wx.DefaultPosition, wx.DefaultSize, 0)
         self.pca_label1.Wrap(-1)
         self.pca_label1.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
         self.pca_label1.SetBackgroundColour(wx.Colour(240, 240, 240))
 
-        bSizer2.Add(self.pca_label1, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaImport.Add(self.pca_label1, 0, wx.ALL, 5)
 
         self.pca_pcaImport = wx.FilePickerCtrl(self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*",
                                                wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE)
-        bSizer2.Add(self.pca_pcaImport, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaImport.Add(self.pca_pcaImport, 0, wx.ALL, 5)
 
-        bSizer1.Add(bSizer2, 1, wx.EXPAND, 5)
+        pca_ParentSizer.Add(pcaBoxSizer_PcaImport, 1, wx.EXPAND, 5)
 
-        bSizer3 = wx.BoxSizer(wx.HORIZONTAL)
+        pcaBoxSizer_PcaChoice = wx.BoxSizer(wx.HORIZONTAL)
 
         self.pca_label2 = wx.StaticText(self, wx.ID_ANY, u"Select PCA columns:", wx.DefaultPosition, wx.DefaultSize, 0)
         self.pca_label2.Wrap(-1)
@@ -52,32 +52,32 @@ class MyFrame1(wx.Dialog):
         self.pca_label2.SetBackgroundColour(wx.Colour(240, 240, 240))
         self.pca_label2.Enable(False)
 
-        bSizer3.Add(self.pca_label2, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaChoice.Add(self.pca_label2, 0, wx.ALL, 5)
 
         pca_col1Choices = []
         self.pca_col1 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, pca_col1Choices, 0)
         self.pca_col1.SetSelection(0)
         self.pca_col1.Enable(False)
 
-        bSizer3.Add(self.pca_col1, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaChoice.Add(self.pca_col1, 0, wx.ALL, 5)
 
         pca_col2Choices = []
         self.pca_col2 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, pca_col2Choices, 0)
         self.pca_col2.SetSelection(0)
         self.pca_col2.Enable(False)
 
-        bSizer3.Add(self.pca_col2, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaChoice.Add(self.pca_col2, 0, wx.ALL, 5)
 
         pca_col3Choices = []
         self.pca_col3 = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, pca_col3Choices, 0)
         self.pca_col3.SetSelection(0)
         self.pca_col3.Enable(False)
 
-        bSizer3.Add(self.pca_col3, 0, wx.ALL, 5)
+        pcaBoxSizer_PcaChoice.Add(self.pca_col3, 0, wx.ALL, 5)
 
-        bSizer1.Add(bSizer3, 1, wx.EXPAND, 5)
+        pca_ParentSizer.Add(pcaBoxSizer_PcaChoice, 1, wx.EXPAND, 5)
 
-        bSizer4 = wx.BoxSizer(wx.HORIZONTAL)
+        pcaBoxSizer_PhenoImport = wx.BoxSizer(wx.HORIZONTAL)
 
         self.pca_label3 = wx.StaticText(self, wx.ID_ANY, u"Import Phenotype file (optional):", wx.DefaultPosition,
                                         wx.DefaultSize, 0)
@@ -86,17 +86,17 @@ class MyFrame1(wx.Dialog):
         self.pca_label3.SetBackgroundColour(wx.Colour(240, 240, 240))
         self.pca_label3.Enable(False)
 
-        bSizer4.Add(self.pca_label3, 0, wx.ALL, 5)
+        pcaBoxSizer_PhenoImport.Add(self.pca_label3, 0, wx.ALL, 5)
 
         self.pca_phenoImport = wx.FilePickerCtrl(self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*",
                                                  wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE)
         self.pca_phenoImport.Enable(False)
 
-        bSizer4.Add(self.pca_phenoImport, 0, wx.ALL, 5)
+        pcaBoxSizer_PhenoImport.Add(self.pca_phenoImport, 0, wx.ALL, 5)
 
-        bSizer1.Add(bSizer4, 1, wx.EXPAND, 5)
+        pca_ParentSizer.Add(pcaBoxSizer_PhenoImport, 1, wx.EXPAND, 5)
 
-        bSizer5 = wx.BoxSizer(wx.HORIZONTAL)
+        pcaBoxSizer_phenoChoice = wx.BoxSizer(wx.HORIZONTAL)
 
         self.pca_label4 = wx.StaticText(self, wx.ID_ANY, u"Which column represents the grouping?", wx.DefaultPosition,
                                         wx.DefaultSize, 0)
@@ -105,33 +105,33 @@ class MyFrame1(wx.Dialog):
         self.pca_label4.SetBackgroundColour(wx.Colour(240, 240, 240))
         self.pca_label4.Enable(False)
 
-        bSizer5.Add(self.pca_label4, 0, wx.ALL, 5)
+        pcaBoxSizer_phenoChoice.Add(self.pca_label4, 0, wx.ALL, 5)
 
         pca_phenoChoiceChoices = []
         self.pca_phenoChoice = wx.Choice(self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, pca_phenoChoiceChoices, 0)
         self.pca_phenoChoice.SetSelection(0)
         self.pca_phenoChoice.Enable(False)
 
-        bSizer5.Add(self.pca_phenoChoice, 0, wx.ALL, 5)
+        pcaBoxSizer_phenoChoice.Add(self.pca_phenoChoice, 0, wx.ALL, 5)
 
-        bSizer1.Add(bSizer5, 1, wx.EXPAND, 5)
+        pca_ParentSizer.Add(pcaBoxSizer_phenoChoice, 1, wx.EXPAND, 5)
 
-        bSizer6 = wx.BoxSizer(wx.HORIZONTAL)
+        pcaBoxSizer_Buttons = wx.BoxSizer(wx.HORIZONTAL)
 
         self.pca_Confirm = wx.Button(self, wx.ID_ANY, u"Confirm", wx.DefaultPosition, wx.DefaultSize, 0)
         self.pca_Confirm.Enable(False)
 
-        bSizer6.Add(self.pca_Confirm, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
+        pcaBoxSizer_Buttons.Add(self.pca_Confirm, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
 
         self.pca_Reset = wx.Button(self, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer6.Add(self.pca_Reset, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
+        pcaBoxSizer_Buttons.Add(self.pca_Reset, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
 
         self.pca_Cancel = wx.Button(self, wx.ID_ANY, u"Cancel", wx.DefaultPosition, wx.DefaultSize, 0)
-        bSizer6.Add(self.pca_Cancel, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
+        pcaBoxSizer_Buttons.Add(self.pca_Cancel, 0, wx.ALL | wx.ALIGN_BOTTOM, 5)
 
-        bSizer1.Add(bSizer6, 1, wx.ALIGN_RIGHT, 5)
+        pca_ParentSizer.Add(pcaBoxSizer_Buttons, 1, wx.ALIGN_RIGHT, 5)
 
-        self.SetSizer(bSizer1)
+        self.SetSizer(pca_ParentSizer)
         self.Layout()
 
         self.Centre(wx.BOTH)
@@ -168,5 +168,7 @@ class MyFrame1(wx.Dialog):
     def Cancel(self, event):
         event.Skip()
 
-    def OnClose(self,event):
+    def OnClose(self, event):
         event.Skip()
+
+

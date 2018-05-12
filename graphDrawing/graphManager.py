@@ -21,7 +21,7 @@ from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Navigat
 
 
 MAXWIDTH = 925
-BUTTONHEIGHT = 40
+BUTTONHEIGHT = 50
 MAXHEIGHT = 650
 FIGUREWIDTH = 9
 FIGUREHEIGHT = 5.5
@@ -353,26 +353,28 @@ class graphManager(wx.Frame):
         self.navToolbar.zoom()
 
     def onAppearanceButtonClick(self, event):
-        self.child = pcaAppearance(self)
+        if self.graph.getGraphType() == 'pca':
+            self.child = pcaAppearance(self)
         self.Disable()
         self.child.ShowModal()
+
         if self.child.result == "CANCEL":
-            print('lol')
             event.Skip()
         elif self.child.result == "CONFIRM":
             print("RE-PLOT GRAPH")
 
-            #re-plotting the graph with the newly chosen colours
-            newColours = self.child.GetColours()
-            self.pca.setColours(newColours)
+            if self.graph.getGraphType() == 'pca':
+                #re-plotting the graph with the newly chosen colours
+                newColours = self.child.GetColours()
+                self.graph.setColours(newColours)
 
-            #re-plotting the graph with the newly chosen shape
-            newShapes = self.child.GetShapes()
-            self.pca.setShapes(newShapes)
+                #re-plotting the graph with the newly chosen shape
+                newShapes = self.child.GetShapes()
+                self.graph.setShapes(newShapes)
 
-            pcaData = self.pca.findPcaData(False)
-            self.plotPcaData(pcaData)
-            #self.CreatePCAPlot(self.child._dataDict)
+                pcaData = self.graph.findPcaData(False)
+                self.plotPcaData(pcaData)
+                #self.CreatePCAPlot(self.child._dataDict)
 
     def onHomeButtonClick(self, event):
         self.navToolbar.home()
