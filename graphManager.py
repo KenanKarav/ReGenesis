@@ -149,6 +149,7 @@ class graphManager(wx.Frame):
 
     def createFigure(self):
         # checking if figure exists to avoid reinitializing
+
         if not hasattr(self, 'figure'):
             self.figure = mpl.figure.Figure(figsize=(FIGUREWIDTH, FIGUREHEIGHT), dpi=FIGUREDPI)
 
@@ -165,6 +166,7 @@ class graphManager(wx.Frame):
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
 
         if not hasattr(self, "navToolbar"):
+            locale = wx.Locale(wx.LANGUAGE_ENGLISH)
             self.navToolbar = NavigationToolbar(self.canvas)
             self.navToolbar.Hide()
 
