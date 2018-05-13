@@ -26,12 +26,12 @@ Ignore all the __init__.py files in every directory.
 
 In the root directory:
 
-- graphManager.py is main script that is to be run first in order to start the ReGenesis applciation.
+- graphManager.py is main script that is to be run first in order to start the ReGenesis application.
     To run the application open terminal and type in: python3 graphManager.py
                                           or type in: py graphManager.py
 
 - fileManagement directory: consists of python scripts that are responsible for extracting and storing of data from the
-  relative files
+  relevant files
     - admixCreator.py
     - admixCreatorGUI.py
     - file.py
