@@ -149,6 +149,11 @@ class graphManager(wx.Frame):
         pass
 
     def createFigure(self):
+        """
+               Creates figure or clears figure and adds a new subplot to the figure.
+
+
+        """
         # checking if figure exists to avoid reinitializing
 
         if not hasattr(self, 'figure'):
@@ -162,28 +167,41 @@ class graphManager(wx.Frame):
         self.axes = self.figure.add_subplot(111)
 
     def showGraph(self):
+        """
+            Produces key and canvas.
 
+        """
         self.axes.legend()
         self.canvas = FigureCanvas(self.renderer, wx.ID_ANY, self.figure)
 
+        # Initialises navToolbar instance to use built in functions for custom toolbar
         if not hasattr(self, "navToolbar"):
             locale = wx.Locale(wx.LANGUAGE_ENGLISH)
             self.navToolbar = NavigationToolbar(self.canvas)
             self.navToolbar.Hide()
 
     def CreatePCAPlot(self, data):
-
+        """
+        Creates pca graph and draws it.
+        """
         self.graph = pcaGraph(data)
         pcaData = self.graph.findPcaData(True)
         self.plotPcaData(pcaData)
 
     def CreateAdmixturePlot(self, data):
-
+        """
+        Creates admixture graph and draws it.
+        """
         self.graph = admixGraph(data)
         admixData = self.graph.genDataDictionary()
         self.plotAdmixData(admixData)
 
     def plotPcaData(self, pcaData):
+        """
+        Plots PCA data to figure.
+        """
+
+
         pcaAppearance.groupNames = self.graph.getGroups()
         pcaAppearance.groupColours = self.graph.getColours()
         pcaAppearance.groupShapes = self.graph.getShapes()
@@ -224,7 +242,9 @@ class graphManager(wx.Frame):
 
 
     def plotAdmixData(self, admixData):
-
+        """
+        Plots admixture data to figure.
+        """
 
         groups = list(admixData.keys())
         ancestryLabels = list(admixData[groups[0]].keys())
@@ -286,6 +306,9 @@ class graphManager(wx.Frame):
 
     # Event Handlers
     def newPCAOnMenuSelection(self, event):
+        """
+        Event handler for new PCA menu selection.
+        """
         self.child = pcaCreator(self)
         self.Disable()
         self.child.ShowModal()
@@ -296,6 +319,9 @@ class graphManager(wx.Frame):
 
 
     def newAdmixtureOnMenuSelection(self, event):
+        """
+        Event handler for new Admixture menu selection.
+        """
         self.child = admixCreator(self)
         self.Disable()
         self.child.ShowModal()
@@ -305,6 +331,9 @@ class graphManager(wx.Frame):
             self.CreateAdmixturePlot(self.child._dataDict)
 
     def saveGraphOnMenuSelection(self, event):
+        """
+        Event handler for save Graph menu selection.
+        """
         with wx.FileDialog(self, "Save Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
                            style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT) as fileDialog:
 
@@ -320,6 +349,9 @@ class graphManager(wx.Frame):
                 wx.LogError("Cannot save current data in file '%s'." % pathname)
 
     def doSaveData(self, f):
+        """
+        Saves project state to file.
+        """
         # find dictionary of values to plot
         if self.graph.getGraphType() == 'admix':
             data = self.graph.getSaveFileData()
@@ -333,6 +365,10 @@ class graphManager(wx.Frame):
         f.close()
 
     def loadGraphOnMenuSelection(self, event):
+
+        """
+        Event handler for load Graph menu selection.
+        """
             # otherwise ask the user what new file to open
         with wx.FileDialog(self, "Load Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
                            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
@@ -349,6 +385,9 @@ class graphManager(wx.Frame):
                 wx.LogError("Cannot open file '%s'." % file)
 
     def doLoadData(self,f):
+        """
+        Loads project state from file.
+        """
         data = json.load(f)
         if data.get("GraphType") == 'admix':
             # Delete the Graph Type key from the data dict
@@ -361,13 +400,21 @@ class graphManager(wx.Frame):
         f.close()
 
     def exportGraphOnMenuSelection(self, event):
+        """
+        Exports graph as image.
+        """
         self.navToolbar.save_figure()
 
     def onZoomButtonClick(self, event):
-
+        """
+        Activates zoom mode on graph.
+        """
         self.navToolbar.zoom()
 
     def onAppearanceButtonClick(self, event):
+        """
+        Opens appearance editor.
+        """
         if self.graph.getGraphType() == 'pca':
             self.child = pcaAppearance(self)
             self.Disable()
@@ -412,22 +459,40 @@ class graphManager(wx.Frame):
                 self.plotPcaData(pcaData)
                 #self.CreatePCAPlot(self.child._dataDict)
 
+        elif self.graph.getGraphType() == "admix":
+            wx.MessageDialog(None, "Admixture Appearance editing to b")
+
     def onHomeButtonClick(self, event):
+        """
+        Resets graph panning and zooming
+        """
         self.navToolbar.home()
 
     def onPanButtonClick(self, event):
+        """
+        Activates Pan mode on graph.
+        """
         self.navToolbar.pan()
 
     def onConfigureButtonClick(self, event):
         self.navToolbar.configure_subplots()
 
     def onBackButtonClick(self, event):
+        """
+        Undoes latest panning or zooming change.
+        """
         self.navToolbar.back()
 
     def onForwardButtonClick(self, event):
+        """
+        Redoes latest undone panning or zooming change.
+        """
         self.navToolbar.forward()
 
     def onExportButtonClick(self, event):
+        """
+        Exports graph as image.
+        """
         self.navToolbar.save_figure()
 if __name__ == "__main__":
     app = wx.App(False)
