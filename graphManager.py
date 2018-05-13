@@ -1,4 +1,4 @@
-import numpy as np
+
 import wx
 import wx.lib.mixins.inspection as wit
 
@@ -26,6 +26,7 @@ MAXHEIGHT = 650
 FIGUREWIDTH = 9
 FIGUREHEIGHT = 5.5
 FIGUREDPI = 100
+
 class graphManager(wx.Frame):
     def __init__(self, parent):
         wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"ReGenesis", pos=wx.DefaultPosition,
