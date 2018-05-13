@@ -47,7 +47,7 @@ class graphManager(wx.Frame):
         self.toolbarSizer = wx.BoxSizer(wx.HORIZONTAL)
 
         # adding buttons
-        self.homeButton = wx.Button(self.toolbar, wx.ID_ANY, u"Home", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.homeButton = wx.Button(self.toolbar, wx.ID_ANY, u"Reset", wx.DefaultPosition, wx.DefaultSize, 0)
         self.toolbarSizer.Add(self.homeButton, 0, wx.ALL, 5)
 
         self.backButton = wx.Button(self.toolbar, wx.ID_ANY, u"Undo", wx.DefaultPosition, wx.DefaultSize, 0)
@@ -209,9 +209,7 @@ class graphManager(wx.Frame):
             hasLabels = self.graph.getHasLabels()
 
             # plotting the graph
-            print("hi Before")
             self.axes.scatter(x, y, label=group, s=sizeList[group], color=colourList[group], marker=shapeList[group])
-            print("hi")
         self.axes.set_title(title)
         if(hasGrid):
             self.axes.grid()
@@ -334,11 +332,6 @@ class graphManager(wx.Frame):
         f.close()
 
     def loadGraphOnMenuSelection(self, event):
-        '''if self.contentNotSaved:
-            if wx.MessageBox("Current content has not been saved! Proceed?", "Please confirm",
-                             wx.ICON_QUESTION | wx.YES_NO, self) == wx.NO:
-                return'''
-
             # otherwise ask the user what new file to open
         with wx.FileDialog(self, "Load Graph file", wildcard="Regenesis Graph File files (*.rgf)|*.rgf",
                            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as fileDialog:
@@ -376,13 +369,18 @@ class graphManager(wx.Frame):
     def onAppearanceButtonClick(self, event):
         if self.graph.getGraphType() == 'pca':
             self.child = pcaAppearance(self)
-        self.Disable()
-        self.child.ShowModal()
+            self.Disable()
+            self.child.ShowModal()
+        else:
+            msgDlg = wx.MessageDialog(parent=self, message="Appearance editing functionality for admixture graph still to come in future releases",
+                                      caption="Edit Admixture graph appearance", style=wx.ICON_INFORMATION)
+            val = msgDlg.ShowModal()
+            msgDlg.Show()
+
 
         if self.child.result == "CANCEL":
             event.Skip()
         elif self.child.result == "CONFIRM":
-            print("RE-PLOT GRAPH")
 
             if self.graph.getGraphType() == 'pca':
                 #re-plotting the graph with the newly chosen colours

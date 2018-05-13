@@ -61,32 +61,24 @@ class pcaGraph():
         if 'Colours' in data:
             self.hasColours = True
             self.groupColours = data['Colours']
-        else:
-            print('no defined colours')
 
         #checking if shapes have been defined
         self.hasShapes = False
         if 'Shapes' in data:
             self.hasShapes = True
             self.groupShapes = data['Shapes']
-        else:
-            print('no defined shapes')
 
         #checking if the group size has been defined
         self.hasSize = False
         if 'Sizes' in data:
             self.hasSize = True
             self.groupSizes = data['Sizes']
-        else:
-            print("no defined size")
 
         #checking if title has been defined
         self.hasTitle = False
         if 'Title' in data:
             self.hasTitle = True
             self.title = data['Title']
-        else:
-            print('no defined title')
 
 
     # finds and stores each group from a list in a seperate list
@@ -202,7 +194,6 @@ class pcaGraph():
                     if isNew:
                         # assigning a random colour to each group
                         if not self.hasColours:
-                            print("NEW AND HAS NO DEFINED COLOURS")
                             rand = []
                             rand.append(random.random())
                             rand.append(random.random())
@@ -217,7 +208,6 @@ class pcaGraph():
 
                         #assigning a random shape to each group
                         if not self.hasShapes:
-                            print("NEW AND HAS NO DEFINED SHAPES")
                             # point, circle, square, triangle, diamond, cross, plus
                             availableShapes = ['.', 'o', 's', '^', 'D', 'x', '+']
                             rand = random.randint(0,6)
@@ -231,7 +221,6 @@ class pcaGraph():
 
                         #assigning a size of 3 to each group
                         if not self.hasSize:
-                            print("NEW AND HAS NO DEFINED SIZE")
                             self.groupSizes.update({
                                 self.pcaGroups[numGroups]: 3
                             })
@@ -255,7 +244,6 @@ class pcaGraph():
 
                 # assigning a random colour
                 if not self.hasColours:
-                    print("NEW AND HAS NO DEFINED COLOUR")
                     rand = []
                     rand.append(random.random())
                     rand.append(random.random())
@@ -269,7 +257,6 @@ class pcaGraph():
                     })
                 #assigning a random shape
                 if not self.hasShapes:
-                    print("NEW AND HAS NO DEFINED SHAPES")
                     # point, circle, square, triangle, diamond, cross, plus
                     availableShapes = ['.', 'o', 's', '^', 'D', 'x', '+']
                     rand = random.randint(0, 6)
@@ -283,7 +270,6 @@ class pcaGraph():
 
                 #assigning a size of 3
                 if not self.hasSize:
-                    print("NEW AND HAS NO DEFINED SIZE")
                     self.groupSizes.update({
                         'ungrouped': 3
                     })
@@ -294,7 +280,6 @@ class pcaGraph():
 
         # setting the title
         if isNew and not self.hasTitle:
-            print("NEW AND HAS NO DEFINED TITLE")
             self.title = "PCA Plot"
 
         return self.pcaDataDict

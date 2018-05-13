@@ -31,11 +31,12 @@ class fileImporter():
         self._fileName = os.path.basename(filePath)
 
         # determining the file type
-        self._isPca = self._fileName.find(".evec")
+        self._isPca1 = self._fileName.find("evec")
+        self._isPca2 = self._fileName.find("pca")
         self._isAdmix = self._fileName.find(".Q.")
         self._isFam = self._fileName.find(".fam")
-        self._isPheno = self._fileName.find(".phe")
-        if self._isPca > -1:
+        self._isPheno = self._fileName.find("phe")
+        if self._isPca1 > -1 or self._isPca2 > -1:
             if fileType == 'PCA':
                 self._fileType = fileType
                 return True

@@ -12,6 +12,10 @@ class pcaCreator(pca_Frame):
         self.dimension = 2
         self.result = ""
 
+        # the third PCA column selector is hidden because the 3D plotting functionality has not yet been implemented
+        # majority of the code for the third pca column selector still exists and will be used when the program is expanded upon
+        self.pca_col3.Hide()
+
     def ImportPcaFile( self, event ):
         #run the file validity checker
         self._pcaFilePath = self.pca_pcaImport.Path
@@ -51,30 +55,6 @@ class pcaCreator(pca_Frame):
             self.pca_col1.SetSelection(0)
             self.pca_col2.SetSelection(1)
 
-    # ensuring that the same column cannot be chosen twice
-    def PcaChoiceChange(self, event):
-       '''
-       num1 = self.pca_col1.Selection +1
-        num2 = self.pca_col2.Selection +1
-        num3 = self.pca_col3.Selection +1
-        print(num1)
-        print(num2)
-        print(num3)
-        self.pca_col1.Clear()
-        self.pca_col2.Clear()
-        self.pca_col3.Clear()
-        for x in range(1, self._pcaNumCols - 1):
-            if x != num2 and x != num3:
-                self.pca_col1.Append('Column ' + str(x))
-            if x != num1 and x != num3:
-                self.pca_col2.Append('Column ' + str(x))
-            if x != num1 and x != num2:
-                self.pca_col3.Append('Column ' + str(x))
-        self.pca_col1.SetSelection(num1-1)
-        self.pca_col2.SetSelection(num2-1)
-        self.pca_col3.SetSelection(num3-1)
-        '''
-
     def ImportPhenoFile(self, event):
         # run the file validity checker
         self._phenoFilePath = self.pca_phenoImport.Path
@@ -92,7 +72,6 @@ class pcaCreator(pca_Frame):
             self.pca_label4.Enable()
 
             # run the file importer
-            #self._phenoData = {}
             self._phenoData = fileImporter.ImportFile(fileImporter, self._phenoFilePath)
 
 
@@ -158,8 +137,7 @@ class pcaCreator(pca_Frame):
         self._pcaIDs = self.GetIDs(self._pcaFilePath, 0, self._numLines)
 
         self._pcaFile = File(self._pcaData['fileName'], self._pcaData['fileType'], self._pcaData['data'])
-        print("PCA "+str(self._num1))
-        print("PCA "+str(self._num2))
+
         self._dataDict = {
             'PcaFile' : self._pcaFile,
             'PcaIDs' : self._pcaIDs,
