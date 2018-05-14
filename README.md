@@ -1,6 +1,6 @@
-##########################README#######################################################################################
+##################README#####################################################################
 
-##########################Installation#################################################################################
+##################Installation###############################################################
 
 The following python packages need to be installed in order for ReGenesis to run:
 
@@ -20,15 +20,16 @@ pip3 install enum
 
 Make sure to type each command separately and hit Enter after each line.
 
-##########################Directory Guide##############################################################################
+##################Directory Guide##########################################################
 
 Ignore all the __init__.py files in every directory.
 
 In the root directory:
 
 - graphManager.py is main script that is to be run first in order to start the ReGenesis application.
-    To run the application open terminal and type in: python3 graphManager.py
-                                          or type in: py graphManager.py
+To run the application open terminal and type in:
+    python3 graphManager.py
+    or type in: py graphManager.py
 
 - fileManagement directory: consists of python scripts that are responsible for extracting and storing of data from the
   relevant files
@@ -42,18 +43,18 @@ In the root directory:
 
 - graphDrawing directory: consists of python scripts that are responsible for interpreting processed data and plotting
   the respective graphs.
-      - graphs directory: contains the directories for both the admixture and pca related scripts
-            - admixtureGraph directory: contains the scripts that deal with storing processed admixture data about the graph,
-              admixture individuals and admixture graph appearence options.
-                    - admixtureAppearance.py (Not implemented for current ReGenesis build)
-                    - admixtureGraph.py
-                    - admixtureIndividual (Not implemented for current ReGenesis build)
-             - pcaGraph directory: contains the scripts that deal with storing processed pca data about the graph,
-               pca individuals and pca graph appearence options.
-                    - pcaAppearence.py
-                    - pcaGraph.py
-                    - pcaIndividual (Not implemented for current ReGenesis build)
-             graphRenderer.py (Not implemented for current ReGenesis build)
+    - graphs directory: contains the directories for both the admixture and pca related scripts
+        - admixtureGraph directory: contains the scripts that deal with storing processed admixture data about the graph,
+        admixture individuals and admixture graph appearence options.
+            - admixtureAppearance.py (Not implemented for current ReGenesis build)
+            - admixtureGraph.py
+            - admixtureIndividual (Not implemented for current ReGenesis build)
+        - pcaGraph directory: contains the scripts that deal with storing processed pca data about the graph,
+        pca individuals and pca graph appearence options.
+            - pcaAppearence.py
+            - pcaGraph.py
+            - pcaIndividual (Not implemented for current ReGenesis build)
+        graphRenderer.py (Not implemented for current ReGenesis build)
 
 - Testing_Suite directory: stores all the unit test modules for majority of the scripts defined in the fileManagement
   and graphDrawing directories as well as the some sample data files that were utilised in the unit tests.
