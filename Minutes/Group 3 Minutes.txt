@@ -1,0 +1,70 @@
+Group 3 Minutes
+
+Aimee Handley (1354032)
+Dhevan Lau (1433596)
+Kenan Karavoussanos (1348582)
+
+Monday, 02 April 2018 
+Duration: 00h15
+	Drew out rough plans for the class structures on a white board.
+	Agreed to all read through each other's individual designs and decide on the best way forward in the next meeting.
+
+Wednesday, 04 April 2018
+Duration: 01h12
+	Elements from each member's design were used.
+	Overall design includes classes for the following:
+		-File: class 
+		-FileManager: class for managing the different file objects created
+		-Graph: object for storing the data for plottingt he graph
+		-Graph Manager: 
+		-Graph Renderer: main class for handling the plotting of graphs
+		-Individual: class for managing the general indiv
+	Planned to all read up on how to use Pyforms and start experimenting with it. Kenan agreed to set up the file structure and github page.
+
+Thursday, 05 April 2018
+Duration: 00h15
+	Discussed written up meeting minutes and further discussed class structure. It was decided to use inheritance i.e. Individual is the generalised class whilst PcaIndividual and AdmixIndividual are the derived classes. Derived classes would also be created for the Graph class.
+	Kenan 
+	Pyforms usability discussed.
+	Git repository is set up and functional.
+	Kenan - to work on File and FileManager
+	Aimee - to work on the FileImporter
+	Dhevan - to work on Individual classes
+
+
+Thursday, 12 April 2018
+Duration: 01h03
+	Kenan started working on the GraphManager class.
+	Discussed class structure. It was decided that the GraphManger is the "head" of all communication. 
+	Discussed the introduction of classes.
+	PcaAppearance class and admixTure appearance class needed for storing the appearance options. 
+	PcaCreator and AdmixCreator classes needed as controllers for receiving user input (importing files, selecting columns etc.) and analysing this input to retrieve the data necessary for plotting the graph.
+	Kenan - embedding matplotlib form into the pyforms frame and GraphManager class.
+	Aimee - pcaCreator class and integration with file importer.
+	Dhevan - admixCreator class and integration with fileImporter.
+
+Monday, 23 April 2018
+Duration: 00h45
+	Having difficulties trying to embed the matplotlib form into the pyforms frame. May need to consider changing to wxPython.
+	Issues with cyclic importing between the pcaCreator and fileImporter.
+
+
+Monday, 30 April 2018
+Duration: 00h33
+	Cyclic importing issue was fixed by removing the fileImporter GUI and passing in the necessary parameters when calling the function in the class.
+	Pyforms code has been removed. Now using wxPython.
+	After researching, it was found to be much easier.
+	Making progress with embedding the matplotlib form in the wxPython frame.
+	wxBuilder being used to generate the GUI code - allows for greater seperation of the Model and the View.
+	Unit testing was discussed
+
+
+Monday, 07 May 2018
+Duration: 00h41
+	Dhevan has started the unit testing.
+	The order of importance of functionality was discussed and decided upon.
+	It was decided that the graphRenderer class was redundant. 
+	Kenan - finish embedding matplotlib form in wxPython frame and polish graph Manager
+	Aimee - loading and saving for PCA, pcaGraph and pcaAppearance
+	Dhevan - loading and saving for Admix, admixGraph and admixAppearance
+	No time to implement annotations, line drawing, individual selection and searching or any other graph interactivity.
