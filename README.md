@@ -15,7 +15,9 @@ of pip3.exe.
 Once within that directory in terminal type in the following commands to install the packages:
 
 pip3 install matplotlib
+
 pip3 install wxpython
+
 pip3 install enum
 
 Make sure to type each command separately and hit Enter after each line.
@@ -35,6 +37,8 @@ To run the application open terminal and type in:
     or
 
     py graphManager.py
+
+- Documentation directory: consists of the user manual and technical manual for ReGenesis
 
 - fileManagement directory: consists of python scripts that are responsible for extracting and storing of data from the
   relevant files
