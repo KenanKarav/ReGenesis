@@ -17,6 +17,15 @@ class pcaCreator(pca_Frame):
         self.pca_col3.Hide()
 
     def ImportPcaFile( self, event ):
+        """
+        Import the PCA file
+
+        Validate the file.
+        Enable the column selector.
+        Run the file importer.
+        Populate the pca choice boxes with the column options.
+        """
+
         #run the file validity checker
         self._pcaFilePath = self.pca_pcaImport.Path
         self._isValid = fileImporter.ValidateFile(fileImporter, 'PCA', self._pcaFilePath)
@@ -56,6 +65,14 @@ class pcaCreator(pca_Frame):
             self.pca_col2.SetSelection(1)
 
     def ImportPhenoFile(self, event):
+        """
+        Import the phenotype file
+
+        Validate the file.
+        Enable the column selector.
+        Run the file importer.
+        Populate the phenotype choice boxes with the column options.
+        """
         # run the file validity checker
         self._phenoFilePath = self.pca_phenoImport.Path
         self._isValid = fileImporter.ValidateFile(fileImporter, 'Phenotype', self._phenoFilePath)
@@ -63,7 +80,7 @@ class pcaCreator(pca_Frame):
             errDlg = wx.MessageDialog(parent=self, message="Please select a valid file type",
                                       caption="Invalid file chosen", style=wx.ICON_ERROR)
             val = errDlg.ShowModal()
-            errDlg.ShowModal()
+            errDlg.Show()
             self.pca_phenoImport.Path = ''
 
         else:
@@ -86,14 +103,20 @@ class pcaCreator(pca_Frame):
             self._isPheno = True
 
     def Cancel(self, event):
-        # close the window
+        """
+        Close the window and enable the parent window.
+        """
+
         self.result = "CANCEL"
         self._parent.Enable()
         self._parent.Show()
         self.Close()
 
     def Reset(self, event):
-        #reset the form to its original state
+        """
+        Reset the form to its original state.
+        """
+
         self.pca_pcaImport.Path = ''
         self.pca_phenoImport.Path = ''
 
@@ -119,6 +142,15 @@ class pcaCreator(pca_Frame):
         self._isPheno = False
 
     def Confirm(self, event):
+        """
+        User confirms selections.
+
+        Extract PCA data information.
+        Store PCA information in dictionary.
+        Check if phenotype exists.
+        Store pca data and phenotype data in the dictionary if it exists.
+        """
+
         # extracting PCA data info
         self.result = "CONFIRM"
         self._numLines = self.FileLength(self._pcaFilePath)
@@ -151,8 +183,6 @@ class pcaCreator(pca_Frame):
             'dimension' : self.dimension
         }
         if not self._isPheno:
-            #return file object
-
             self._parent.Enable()
             self._parent.Show()
             self.Close()
@@ -163,9 +193,6 @@ class pcaCreator(pca_Frame):
             # extracting the Pheno data
             self._num = self.pca_phenoChoice.Selection
             self._numLines = self.FileLength(self._phenoFilePath)
-            # put pheno data into a dictionary with key=ID and value=column
-            # store all pca data IDs in a list, loop through checking for the position of the ID in the phenotype file
-            # plot each group seperately
 
             tempID_1 = self.GetPhenoCol( self._phenoFilePath, 0, self._numLines)
             tempID_2 = self.GetPhenoCol(self._phenoFilePath, 1, self._numLines)
@@ -175,11 +202,10 @@ class pcaCreator(pca_Frame):
                 self._phenoIDs.append(tempID_1[i] + ':' + tempID_2[i])
 
             # retrieving data from chosen phenotype column and storing in list
-
             self._phenoCol = self.GetPhenoCol(self._phenoFilePath, self._num, self._numLines)
 
 
-
+            #updating phenotype dictionary
             self._phenoFile = File(self._phenoData['fileName'], self._phenoData['fileType'], self._phenoData['data'])
             self._dataDict.update({
                 'PhenoFile' : self._phenoFile,

@@ -3,6 +3,11 @@ import random
 class pcaGraph():
 
     def __init__(self, data):
+        """
+        Initialise all variables.
+
+        Update data dictionary for saving and loading.
+        """
         self.pcaFileData={}
         self.graphType = 'pca'
         self.groupColours = {}
@@ -81,8 +86,10 @@ class pcaGraph():
             self.title = data['Title']
 
 
-    # finds and stores each group from a list in a seperate list
     def genListGroups(self, column):
+        """
+        finds and stores each group from a list in a separate list
+        """
         groupList = []
         for i in range(len(column)):
             data = column[i]
@@ -163,6 +170,9 @@ class pcaGraph():
         return self.pcaFileData
 
     def findPcaData(self, isNew):
+        """
+        Extract all pca-related data and store in dictionary.
+        """
         self.pcaDataDict = {}
         if self.hasPheno:
             # looping through all the groups
@@ -180,7 +190,7 @@ class pcaGraph():
                             tempY.append(self.yVals[numLines])
                             if self.dimension == 3:
                                 tempZ.append(self.zVals[numLines])
-                # plotting the graph
+                # updating dictionary of pca Data with the groups and their corresponding values
                 if len(tempX) > 0:
                     self.pcaDataDict.update({
                         self.pcaGroups[numGroups] : {'x': tempX,

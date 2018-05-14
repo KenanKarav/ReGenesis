@@ -4,6 +4,9 @@ import math
 class PcaAppearance(pcaAppearance_Frame):
 
     def __init__(self, parent):
+        """
+        Initialise the appearance-related GUI and variables.
+        """
         pcaAppearance_Frame.__init__(self, parent)
         self._parent = parent
         self.result = ""
@@ -61,7 +64,9 @@ class PcaAppearance(pcaAppearance_Frame):
             self.pca_GroupSize.SetValue(self.groupSizes[self.groupNames[0]])
 
     def GroupChange(self, event):
-
+        """
+        Change the information displayed to match the new group selected.
+        """
         groupNum = self.pca_GroupName.GetCurrentSelection()
 
         #set the colour of the new group
@@ -82,6 +87,9 @@ class PcaAppearance(pcaAppearance_Frame):
         self.pca_GroupSize.SetValue(size)
 
     def UpdateShapeDisplay(self, shape):
+        """
+        Set the GUI shape selection based on a string.
+        """
         if shape == '.':
             self.pca_GroupShape.SetSelection(0)
         elif shape == 'o':
@@ -116,16 +124,25 @@ class PcaAppearance(pcaAppearance_Frame):
         return self.groupSizes
 
     def OnClose(self,event):
+        """
+        Ensure that the parent window is enabled if the red top-right quit button is clicked.
+        """
         self._parent.Enable()
         self.Destroy()
 
     def CancelChanges(self, event):
+        """
+        Cancel any changes made, close the appearance editor and enable the main window.
+        """
         self.result="CANCEL"
         self._parent.Enable()
         self._parent.Show()
         self.Close()
 
     def AcceptChanges(self, event):
+        """
+        Set all variables to match the GUI values and close the window.
+        """
         self.result="CONFIRM"
         # find the group being edited
         groupNum = self.pca_GroupName.GetCurrentSelection()
