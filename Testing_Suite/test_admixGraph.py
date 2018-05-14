@@ -4,7 +4,7 @@ from graphDrawing.graphs.admixtureGraph.admixtureGraph import admixtureGraph
 class TestAdmixGraph(unittest.TestCase):
 
     def setUp(self):
-        # Test Graph with Pheno Fata
+        # Test Graph with Pheno Data
         testDict = {'AdmixFile' : None, 'AdmixIDs' : ['ID1', 'ID2', 'ID3'], 'Ancestry1' : [0.33, 0.48, 0.58], 'Ancestry2' : [0.60, 0.22, 0.24], 'Ancestry3' : [0.07, 0.30, 0.18]
                     , 'PhenoFile' : None, 'PhenoIDs' : ['ID1', 'ID2', 'ID3'], 'PhenoColumn' : ['Green', 'Blue', 'Green']}
         self.myGraph = admixtureGraph(testDict)

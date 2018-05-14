@@ -4,14 +4,14 @@
 
 The following python packages need to be installed in order for ReGenesis to run:
 
-Matplotlib
+matplotlib
 wxPython
-Enum
+enum
 
 These can easily be installed using pip3.
 To install these packages open terminal and navigate to the directory where pip3.exe is installed.
 To find where pip3.exe is installed simply search for it using your computer's search tool and open the file location
-pf pip3.exe
+of pip3.exe
 Once within that directory in terminal type in the following commands to install the packages:
 
 pip3 install matplotlib

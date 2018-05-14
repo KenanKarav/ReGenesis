@@ -123,7 +123,7 @@ class admixCreator(AdmixFrame):
         }
 
         numColumns = self.CountCols(self._admixFilePath)
-
+        # Count the amount of ancestries and update the data dictionary as required.
         for i in range(1, numColumns+1):
             ancestryKey = 'Ancestry'+str(i)
             self._dataDict.update({
@@ -165,7 +165,9 @@ class admixCreator(AdmixFrame):
         self.Close()
 
 
-    #Counting The Columns
+    """
+    Count total number of columns
+    """
     def CountCols(self, filePath):
         self._file = open(filePath)
         self._file.readline()
@@ -173,6 +175,9 @@ class admixCreator(AdmixFrame):
         self._file.close()
         return len(self._list)
 
+    """
+    Get a single column of data and convert it to float data type
+    """
     def GetAdmixColumn(self, filePath, colNum, numLines):
         self._realList = []
         file = open(filePath)
@@ -182,6 +187,9 @@ class admixCreator(AdmixFrame):
         file.close()
         return self._realList
 
+    """
+    Get a single column of data
+    """
     def GetColumn(self, filePath, colNum, numLines):
         self._realList = []
         file = open(filePath)
@@ -191,7 +199,9 @@ class admixCreator(AdmixFrame):
         file.close()
         return self._realList
 
-        # counting number of lines in file
+    """
+    counting number of lines in file
+    """
     def FileLength(self, filePath):
         self._file = open(filePath)
         for i, line in enumerate(self._file):
@@ -199,6 +209,10 @@ class admixCreator(AdmixFrame):
         self._file.close()
         return i + 1
 
+
+    """
+    Get the IDs which are the first two columns in the Fam file
+    """
     def GetIDs(self, filePath, numLines):
         self._realList = []
         file = open(filePath)
@@ -207,8 +221,9 @@ class admixCreator(AdmixFrame):
             self._realList.append(tempList[0]+':'+tempList[1])
         file.close()
         return self._realList
-
-    # finds and stores each group from a list in a separate list
+    """
+    Finds and stores each group from a list in a separate list
+    """
     def FindGroups(self, dataList):
         groupList = []
         for i in range(len(dataList)):

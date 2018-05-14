@@ -33,6 +33,7 @@ class TestAdmixCreator(unittest.TestCase):
         self.assertEqual(admixCreator.GetIDs(self, "AdmixtureTestFiles/small.phe", 5), compareList)
 
     def test_FindGroups(self):
+        # Test that it correctly find and stores each unique group in a list and then appends it into a list to be returned
         testList = ['Green', 'Green', 'Red', 'Blue', 'Green', 'Orange', 'Yellow', 'Blue', 'Red', 'Green', 'Yellow', 'Orange', 'Red', 'Red']
         self.assertEqual(admixCreator.FindGroups(self, testList), ['Green', 'Red', 'Blue', 'Orange', 'Yellow'])
 

@@ -1,19 +1,9 @@
 
 class admixtureGraph():
 
-        def __init__(self):
-            self.admixIDs = []
-            self.ancestryDict = {}  # This will contain a Dict of lists
-            self.numAncestries = 0
-
-            self.hasPheno = False
-            self.phenoCol = []
-            self.admixGroups = []
-            self.phenoDict = {}
-            self.admixDatadict = {}
-            self.graphType = 'admix'
-
-
+        """
+        Initialise admixture graph variables.
+        """
         def __init__(self, data):
             self.admixIDs = data['AdmixIDs']
             self.ancestryDict = {}  # This will contain a Dict of lists
@@ -43,9 +33,12 @@ class admixtureGraph():
                 self.phenoDict = {}
                 for i in range(len(self.phenoCol)):
                     self.phenoDict.update({self.phenoIDs[i]: self.phenoCol[i]})
-
                 self.admixFileData = data
 
+        """
+        Generate list of unique groups
+        """
+        # Returns a list of containing each unique group
         def genGroupList(self, column):
             groupList = []
             for i in range(len(column)):
@@ -56,6 +49,9 @@ class admixtureGraph():
                     groupList.append(data)
             return groupList
 
+        """
+        Generate data dictionary that seprates each individual into their respective groups.
+        """
         def genDataDictionary(self):
             tempDataDict = {}
 
@@ -89,28 +85,44 @@ class admixtureGraph():
 
 
         # Accessors
+        """
+        Return admix IDs
+        """
         def getAdmixIDs(self):
             return self.admixIDs
-
+        """
+        Return ancestry dictionary
+        """
         def getAncestryDict(self):
             return self.ancestryDict
-
+        """
+        Return number of ancestries
+        """
         def getNumAncestries(self):
             return self.numAncestries
-
+        """
+        Return dictionary with phenotype data
+        """
         def getPhenoDict(self):
             return self.phenoDict
-
+        """
+        Return list of groups
+        """
         def getGroupList(self):
             return self.admixGroups
-
+        """
+        Return data in dictionary in save-able format
+        """
         def getSaveFileData(self):
             tempDict = self.admixFileData
+            # Delete the file data types as they cannot be converted to a save-able format
             del tempDict ["AdmixFile"]
             if "PhenoFile" in tempDict:
                 del tempDict["PhenoFile"]
             return tempDict
-
+        """
+        Return graph type
+        """
         def getGraphType(self):
             return self.graphType
 
