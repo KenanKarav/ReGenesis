@@ -31,7 +31,10 @@ In the root directory:
 To run the application open terminal and type in:
 
     python3 graphManager.py
-    or type in: py graphManager.py
+
+    or
+
+    py graphManager.py
 
 - fileManagement directory: consists of python scripts that are responsible for extracting and storing of data from the
   relevant files
